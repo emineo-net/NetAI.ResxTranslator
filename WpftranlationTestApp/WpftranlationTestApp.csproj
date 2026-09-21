@@ -51,8 +51,8 @@
 
 
 
-	<!--<Import Project="..\..\Libraries\AiTranslator.Tasks\build\AiTranslator.Tasks.targets"
-			Condition="Exists('..\..\Libraries\AiTranslator.Tasks\build\AiTranslator.Tasks.dll')" />-->
+	<!--<Import Project="..\..\Libraries\NetAI.ResxTranslator.Tasks\build\NetAI.ResxTranslator.Tasks.targets"
+			Condition="Exists('..\..\Libraries\NetAI.ResxTranslator.Tasks\build\NetAI.ResxTranslator.Tasks.dll')" />-->
 
 
 

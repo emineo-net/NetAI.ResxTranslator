@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace AiTranslator.Core.Config
+namespace NetAI.ResxTranslator.Core.Config
 {
     public record AiTestingConfig
     {

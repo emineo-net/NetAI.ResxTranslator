@@ -1,9 +1,9 @@
-﻿using AiTranslator.Core.Models;
+﻿using NetAI.ResxTranslator.Core.Models;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
-namespace AiTranslator.Core;
+namespace NetAI.ResxTranslator.Core;
 
 public class TranslationPromptBuilder
 {

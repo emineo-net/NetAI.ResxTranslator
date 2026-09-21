@@ -1,7 +1,7 @@
-﻿using AiTranslator.Core.Config;
+﻿using NetAI.ResxTranslator.Core.Config;
 using System.Text;
 
-namespace AiTranslator.Core.Services;
+namespace NetAI.ResxTranslator.Core.Services;
 
 public class AiPromptBuilder
 {

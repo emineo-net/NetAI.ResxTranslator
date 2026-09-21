@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace AiTranslator.Core.Models
+namespace NetAI.ResxTranslator.Core.Models
 {
     public class ResxEntry
     {

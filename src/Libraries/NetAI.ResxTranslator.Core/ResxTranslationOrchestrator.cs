@@ -9,7 +9,7 @@
 
 
 
-using AiTranslator.Core.Models;
+using NetAI.ResxTranslator.Core.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -18,9 +18,9 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
-using AiTranslator.Core.Config;
+using NetAI.ResxTranslator.Core.Config;
 
-namespace AiTranslator.Core
+namespace NetAI.ResxTranslator.Core
 {
     public class ResxTranslationOrchestrator
     {

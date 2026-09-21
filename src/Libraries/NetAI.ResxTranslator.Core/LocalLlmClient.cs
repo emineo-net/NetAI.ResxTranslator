@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;       // <--- Neu für JsonConvert
 using Newtonsoft.Json.Linq;  // <--- Neu für JObject
 
-namespace AiTranslator.Core
+namespace NetAI.ResxTranslator.Core
 {
     public class LocalLlmClient
     {
