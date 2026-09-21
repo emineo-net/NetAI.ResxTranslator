@@ -1,0 +1,19 @@
+﻿<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Projektmappenelemente/">
+    <File Path="../../../Downloads/unitAnIntegrationTestEnvironment.md" />
+    <File Path="buisinessPlanTranslatorNuget.md" />
+    <File Path="INFRASTRUKTUR.md" />
+    <File Path="RebuildAiTranslator.bat" />
+    <File Path="TODO.md" />
+  </Folder>
+  <Folder Name="/src/Libraries/">
+    <Project Path="src/Libraries/AiTranslator.Core/AiTranslator.Core.csproj" />
+    <Project Path="src/Libraries/AiTranslator.Tasks/AiTranslator.Tasks.csproj" />
+  </Folder>
+
+</Solution>
