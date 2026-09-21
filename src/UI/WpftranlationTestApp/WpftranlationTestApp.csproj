@@ -6,14 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <ServerGarbageCollection>true</ServerGarbageCollection>
-    <!-- HIER KANN DEIN KUNDE JETZT KONFIGURIEREN: -->
-    <AiTranslatorApiKey>sk-or-abc-123</AiTranslatorApiKey>
-    <AiTranslatorContext>Dies ist eine medizinische App zur Patientenverwaltung. Nutze formelles Deutsch (Sie) und präzise Fachbegriffe.</AiTranslatorContext>
-    <AiTranslatorGlossaryPath>$(ProjectDir)translation_glossary.txt</AiTranslatorGlossaryPath>
-    <!-- Erlaubt nun flexible Kombinationen wie: release, publish -->
-    <!--<AiTranslatorMode>debug, release, publish</AiTranslatorMode>-->
-    <AiTranslatorMode>debug, release, publish</AiTranslatorMode>
-    <SupportedLanguage>en, it</SupportedLanguage>
+ 
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Dapper" />
