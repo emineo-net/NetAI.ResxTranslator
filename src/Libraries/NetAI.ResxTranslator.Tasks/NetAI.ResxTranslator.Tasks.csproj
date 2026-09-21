@@ -29,7 +29,7 @@
 	<ItemGroup>
 		<!-- WICHTIG: PrivateAssets="all" sorgt dafür, dass nur die DLL eingebettet wird, ohne eine NuGet-Abhängigkeit zu erzeugen -->
 		<ProjectReference Include="..\AiTranslator.Core\NetAI.ResxTranslator.Core.csproj" />
-		<ProjectReference Include="..\NetAI.ResxTranslator.Core\NetAI.ResxTranslator.Core.csproj" PrivateAssets="all" />
+		<ProjectReference Include="..\NetAI.ResxTranslator.Core\NetAI.ResxTranslator.Core.csproj" />
 	</ItemGroup>
 
 	<!-- 1. FÜR LOKALE ENTWICKLUNG: Kopiert nach dem Build die Task-DLL und die Core-DLL in den lokalen build/-Ordner -->
