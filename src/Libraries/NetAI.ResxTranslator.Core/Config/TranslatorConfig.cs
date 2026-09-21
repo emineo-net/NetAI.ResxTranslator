@@ -1,14 +1,12 @@
-﻿using System.Collections.Generic;
-
-namespace NetAI.ResxTranslator.Core.Config;
+﻿namespace NetAI.ResxTranslator.Core.Config;
 
 /// <summary>
-/// Abbild des "translator"-Blocks in aisettings.json.
-/// Ersetzt sämtliche früheren .csproj-Properties
-/// (AiTranslatorApiKey, AiTranslatorContext, AiTranslatorGlossaryPath,
-///  AiTranslatorMode, NeutralLanguage, SupportedLanguage).
-/// Die Property-Namen werden von Newtonsoft standardmäßig case-insensitiv gemappt
-/// ("supportedLanguages" -> SupportedLanguages).
+///     Abbild des "translator"-Blocks in aisettings.json.
+///     Ersetzt sämtliche früheren .csproj-Properties
+///     (AiTranslatorApiKey, AiTranslatorContext, AiTranslatorGlossaryPath,
+///     AiTranslatorMode, NeutralLanguage, SupportedLanguage).
+///     Die Property-Namen werden von Newtonsoft standardmäßig case-insensitiv gemappt
+///     ("supportedLanguages" -> SupportedLanguages).
 /// </summary>
 public class TranslatorConfig
 {
