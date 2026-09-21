@@ -17,21 +17,21 @@ public partial class MainWindow : Window
     {
         //  await DownloadViaCloudFlare.DownloadWithCloudFlare();
 
-        var builder = new AiPromptBuilder(@"C:\Users\steph\source\repos\WebObserver2\src\UI\WpfExplorer\aisettings.json");
+        var builder = new AiPromptBuilder(@"C:\Users\steph\source\repos\NetAI.ResxTranslator\src\UI\WpftranlationTestApp\aisettings.json");
 
         // Angenommen, du analysierst gerade einen "OrderController"
         var finalPrompt = await builder.BuildSystemPromptAsync();
 
         Console.WriteLine(finalPrompt);
 
-        //bool ok = AiTranslatorRunner.Run(@"C:\Users\steph\source\repos\WebObserver2\WpfExplorer");
+        //bool ok = AiTranslatorRunner.Run(@"C:\Users\steph\source\repos\NetAI.ResxTranslator\src\UI\WpftranlationTestApp");
 
         var runner = new AiTranslatorRunner
         {
-            ProjectDir = @"C:\Users\steph\source\repos\WebObserver2\src\UI\WpfExplorer",
+            ProjectDir = @"C:\Users\steph\source\repos\NetAI.ResxTranslator\src\UI\WpftranlationTestApp",
             ApiKey = "sk-...",
             AppContext = "Rechnungs-Verwaltung für KMUs",
-            //GlossaryPath = @"C:\Users\steph\source\repos\WebObserver2\WpfExplorer\glossary.json",
+            //GlossaryPath = @"C:\Users\steph\source\repos\NetAI.ResxTranslator\src\UI\WpftranlationTestApp\aisettings.json",
             SupportedLanguages = "en, de, it" // optional: überschreibt <SupportedLanguage> aus der .csproj
         };
         var ok = await runner.Run(msg => Console.WriteLine($"[Info]  {msg}"), msg => Console.WriteLine($"[Fehler] {msg}"));

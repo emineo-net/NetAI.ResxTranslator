@@ -7,7 +7,7 @@
     "context": "",
     "glossaryPath": "",
     "defaultLanguage": "en",
-    "supportedLanguages": [ "de", "fr", "es" ]
+    "supportedLanguages": [ "de", "fr", "it" ]
   },
   "environment": {
     "targetDotNetVersion": "net9.0",
