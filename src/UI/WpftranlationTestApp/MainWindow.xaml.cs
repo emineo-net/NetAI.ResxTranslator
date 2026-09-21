@@ -24,9 +24,9 @@ public partial class MainWindow : Window
 
         Console.WriteLine(finalPrompt);
 
-        //bool ok = AiTranslatorRunner.Run(@"C:\Users\steph\source\repos\NetAI.ResxTranslator\src\UI\WpftranlationTestApp");
+        //bool ok = ResxTranslatorRunner.Run(@"C:\Users\steph\source\repos\NetAI.ResxTranslator\src\UI\WpftranlationTestApp");
 
-        var runner = new AiTranslatorRunner
+        var runner = new ResxTranslatorRunner
         {
             ProjectDir = @"C:\Users\steph\source\repos\NetAI.ResxTranslator\src\UI\WpftranlationTestApp",
             ApiKey = "sk-...",

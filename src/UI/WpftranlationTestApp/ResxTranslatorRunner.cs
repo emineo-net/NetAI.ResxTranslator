@@ -5,14 +5,14 @@ using NetAI.ResxTranslator.Core.Config;
 namespace WpftranlationTestApp;
 
 /// <summary>
-///     Eigenständiger Runner für AiTranslator.Core – einfach diese Datei in ein
+///     Eigenständiger Runner für NetAI.ResxTranslator.Core – einfach diese Datei in ein
 ///     beliebiges C#-Projekt kopieren (Voraussetzung: ProjectReference/PackageReference
-///     auf AiTranslator.Core). Führt die .resx-Analyse/-Übersetzung aus, komplett ohne
+///     auf NetAI.ResxTranslator.Core). Führt die .resx-Analyse/-Übersetzung aus, komplett ohne
 ///     MSBuild-Task-Infrastruktur.
 ///     Beispiel 1 – Einzeiler:
-///     bool ok = AiTranslatorRunner.Run(@"C:\Users\steph\source\repos\WebObserver2\WpfExplorer");
+///     bool ok = NetAI.ResxTranslatorRunner.Run(@"C:\Users\steph\source\repos\WebObserver2\WpfExplorer");
 ///     Beispiel 2 – mit Instanz, eigenem Logging und weiteren Optionen:
-///     var runner = new AiTranslatorRunner
+///     var runner = new NetAI.ResxTranslatorRunner
 ///     {
 ///     ProjectDir = @"C:\Users\steph\source\repos\WebObserver2\WpfExplorer",
 ///     ApiKey = "sk-...",
@@ -26,7 +26,7 @@ namespace WpftranlationTestApp;
 ///         logInfo:  msg => Console.WriteLine($"[Info]  {msg}"),
 ///         logError: msg => Console.WriteLine($"[Fehler] {msg}"));
 /// </summary>
-public class AiTranslatorRunner
+public class ResxTranslatorRunner
 {
     /// <summary>Wurzelverzeichnis des Projekts, das nach .resx-Dateien durchsucht wird.</summary>
     public string ProjectDir { get; set; } = string.Empty;
@@ -99,6 +99,6 @@ public class AiTranslatorRunner
     /// </summary>
     public static async Task<bool> Run(string projectDir, Action<string>? logInfo = null, Action<string>? logError = null)
     {
-        return await new AiTranslatorRunner { ProjectDir = projectDir }.Run(logInfo, logError);
+        return await new ResxTranslatorRunner { ProjectDir = projectDir }.Run(logInfo, logError);
     }
 }
