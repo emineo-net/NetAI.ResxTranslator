@@ -392,3 +392,11 @@ Logs/
 /src/Libraries/AiTranslator.Tasks/build/AiTranslator.Tasks.dll
 /src/Libraries/NetAI.ResxTranslator.Tasks/build/NetAI.ResxTranslator.Core.dll
 /src/Libraries/NetAI.ResxTranslator.Tasks/build/NetAI.ResxTranslator.Tasks.dll
+/src/Libraries/NetAI.ResxTranslator.Tasks/build/AiTranslator.Core.dll
+/src/Libraries/NetAI.ResxTranslator.Tasks/build/AiTranslator.Tasks.dll
+/src/Libraries/NetAI.ResxTranslator.Tasks/build/Microsoft.Bcl.Memory.dll
+/src/Libraries/NetAI.ResxTranslator.Tasks/build/Newtonsoft.Json.dll
+/src/Libraries/NetAI.ResxTranslator.Tasks/build/System.Buffers.dll
+/src/Libraries/NetAI.ResxTranslator.Tasks/build/System.Memory.dll
+/src/Libraries/NetAI.ResxTranslator.Tasks/build/System.Numerics.Vectors.dll
+/src/Libraries/NetAI.ResxTranslator.Tasks/build/System.Runtime.CompilerServices.Unsafe.dll

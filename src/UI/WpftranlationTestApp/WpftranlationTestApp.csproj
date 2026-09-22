@@ -1,0 +1,52 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <ServerGarbageCollection>true</ServerGarbageCollection>
+ 
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Dapper" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="OsmSharp" />
+    <PackageReference Include="SearchPioneer.Lingua" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\NetAI.ResxTranslator.Core\NetAI.ResxTranslator.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Locales\Resources.Designer.cs">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Locales\Resources.ar.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Locales\Resources.de.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Locales\Resources.resx">
+      <SubType>Designer</SubType>
+      <CustomToolNamespace>WpftranlationTestApp.Locales</CustomToolNamespace>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  
+	
+	
+	<!--<Import Project="..\..\Libraries\NetAI.ResxTranslator.Tasks\build\NetAI.ResxTranslator.Tasks.targets" 
+	        Condition="Exists('..\..\Libraries\NetAI.ResxTranslator.Tasks\build\NetAI.ResxTranslator.Tasks.dll')" />-->
+
+	<Import Project="..\..\Libraries\NetAI.ResxTranslator.Tasks\build\NetAI.ResxTranslator.Tasks.targets" />
+
+
+</Project>
