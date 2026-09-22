@@ -40,5 +40,13 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
     </EmbeddedResource>
   </ItemGroup>
-  <Import Project="..\..\Libraries\NetAI.ResxTranslator.Tasks\build\NetAI.ResxTranslator.Tasks.targets" Condition="Exists('..\..\Libraries\NetAI.ResxTranslator.Tasks\build\NetAI.ResxTranslator.Tasks.dll')" />
+  
+	
+	
+	<!--<Import Project="..\..\Libraries\NetAI.ResxTranslator.Tasks\build\NetAI.ResxTranslator.Tasks.targets" 
+	        Condition="Exists('..\..\Libraries\NetAI.ResxTranslator.Tasks\build\NetAI.ResxTranslator.Tasks.dll')" />-->
+
+	<Import Project="..\..\Libraries\NetAI.ResxTranslator.Tasks\build\NetAI.ResxTranslator.Tasks.targets" />
+
+
 </Project>

@@ -1,4 +1,4 @@
-﻿<Project>
+<Project>
 
 	<PropertyGroup>
 		<!-- DLL-Suche: 1. NuGet-Paket (build\ liegt neben tasks\), 2. lokale Entwicklung (DLL direkt in build\) -->
@@ -11,7 +11,7 @@
 		<ResxTranslatorActive Condition="'$(ResxTranslatorEnabled)' != 'false' And '$(DesignTimeBuild)' != 'true' And '$(ResxTranslatorTaskExists)' == 'true' And !$(MSBuildProjectName.EndsWith('_wpftmp'))">true</ResxTranslatorActive>
 
 		<!-- Bei Multi-Targeting soll die Übersetzung nur im ersten Target Framework laufen -->
-		<_ResxTranslatorFirstTfm>$(TargetFrameworks.Split(';')[0])</_ResxTranslatorFirstTfm>
+		<_ResxTranslatorFirstTfm Condition="'$(TargetFrameworks)' != ''">$(TargetFrameworks.Split(';')[0])</_ResxTranslatorFirstTfm>
 		<_ResxTranslatorIsFirstTfm>false</_ResxTranslatorIsFirstTfm>
 		<_ResxTranslatorIsFirstTfm Condition="'$(TargetFrameworks)' == '' Or '$(TargetFramework)' == '$(_ResxTranslatorFirstTfm)'">true</_ResxTranslatorIsFirstTfm>
 
@@ -56,7 +56,7 @@
 		</ItemGroup>
 	</Target>
 
-	<!-- Führt die Übersetzung aus (nur erstes TFM). Wird von IncludeGeneratedResx per DependsOnTargets aufgerufen. -->
+	<!-- Führt die Übersetzung aus (nur erstes TFM). -->
 	<Target Name="RunResxTranslation"
 	        DependsOnTargets="SetupResxTranslatorSettings"
 	        Condition="'$(ResxTranslatorActive)' == 'true' And '$(_ResxTranslatorIsFirstTfm)' == 'true'">
@@ -79,7 +79,7 @@
 		</ItemGroup>
 	</Target>
 
-	<!-- Fallback für Publish-Wege ohne _IsPublishing (z. B. Visual Studio): läuft NACH dem Build -->
+	<!-- Fallback für Publish-Wege ohne _IsPublishing (z. B. Visual Studio "Publish"-Button): läuft NACH dem Build -->
 	<Target Name="RunResxTranslationOnPublish"
 	        BeforeTargets="PrepareForPublish"
 	        DependsOnTargets="SetupResxTranslatorSettings"
