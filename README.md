@@ -89,7 +89,7 @@ settings files, task assembly, and copied dependencies.
 - Creates missing `.resx` files for all `supportedLanguages`
 - Translates only missing entries
 - Batch processing with 20 entries per request
-- One-time domain analysis for better contextual understanding
+- Per-request domain analysis for better contextual understanding
 - Instructs the model to preserve technical placeholders like `{0}`, `{name}`, `%s`, `\n`, and `\t`
 - Mode control: `all`, `debug`, `release`, `publish`
 - Multi-targeting capable – translation runs only in the first target framework
@@ -136,6 +136,26 @@ Example `aisettings.json`:
     "defaultLanguage": "en",
     "supportedLanguages": [ "de", "fr", "it" ]
   },
+   "environment": {
+      "targetDotNetVersion": "net9.0",
+      "testProjectName": "{ProjectName}.Tests"
+   },
+   "frameworks": {
+      "testFramework": "xunit",
+      "mockingFramework": "moq",
+      "useFluentAssertions": true,
+      "useAutoFixture": true
+   },
+   "codeStyle": {
+      "useFileScopedNamespace": true,
+      "useAsyncSuffix": true,
+      "maxLineLength": 120
+   },
+   "generationBehavior": {
+      "testStrategy": "Both",
+      "splitTestsByMethod": false,
+      "maxTestsPerClass": 15
+   },
   "aiConfiguration": {
     "model": "gpt-4o",
     "temperature": 0.2,
