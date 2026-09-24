@@ -5,7 +5,6 @@
     <Platform Name="x86" />
   </Configurations>
   <Folder Name="/Projektmappenelemente/">
-    <File Path="../../../Downloads/unitAnIntegrationTestEnvironment.md" />
     <File Path="buisinessPlanTranslatorNuget.md" />
     <File Path="INFRASTRUKTUR.md" />
     <File Path="RebuildNetAIResxTranslator.bat" />
