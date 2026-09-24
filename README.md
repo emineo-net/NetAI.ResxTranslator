@@ -1,8 +1,8 @@
 # NetAI.ResxTranslator
 
-> AI-powered automatic translation of missing `.resx` entries in .NET projects — integrated as a NuGet package and MSBuild task.
+> AI-powered automatic translation of missing `.resx` entries in .NET projects — integrated through an MSBuild task.
 
-![.NET](https://img.shields.io/badge/.NET-Standard%202.0-blue)
+![.NET](https://img.shields.io/badge/.NET-netstandard2.0%20%7C%20net8.0%20%7C%20net9.0%20%7C%20net10.0-blue)
 ![MSBuild](https://img.shields.io/badge/MSBuild-Task-green)
 ![AI](https://img.shields.io/badge/AI-Translation-purple)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
@@ -33,16 +33,15 @@
 
 ## Overview
 
-**NetAI.ResxTranslator** is a NuGet package that can be integrated into any .NET project.  
-During build or publish, it automatically detects missing translations in `.resx` files and generates them using AI.
+**NetAI.ResxTranslator** is an MSBuild-integrated translation component consisting of a Core library and an MSBuild Tasks library.  
+During build or publish, it detects missing translations in `.resx` files and generates them through a local OpenAI-compatible LLM endpoint.
 
 Configuration is done via an `aisettings.json` file with a JSON schema.  
 The package injects the configuration file and schema into the target project if they do not already exist.
 
 Supported:
 
-- Cloud AI models (e.g., OpenAI-compatible)
-- Local models
+- Local OpenAI-compatible models through `http://localhost:8080/v1/chat/completions`
 - Multiple target languages
 - Mode-dependent execution (`debug`, `release`, `publish`, `all`)
 - Multi-targeting
@@ -64,6 +63,9 @@ Contains the core logic:
 - `TranslatorLanguageResolver` – validates and normalizes language codes
 - Models and configuration classes
 
+Target frameworks: `netstandard2.0`, `net8.0`, `net9.0`, and `net10.0`.  
+Project dependencies: `Microsoft.Bcl.Memory` and `Newtonsoft.Json`.
+
 ### `NetAI.ResxTranslator.Tasks`
 
 Contains the MSBuild task:
@@ -73,6 +75,10 @@ Contains the MSBuild task:
 - Checks the configured mode
 - Calls the orchestrator
 - Writes MSBuild logs and warnings
+
+Target framework: `netstandard2.0`.  
+The project references Core and `Microsoft.Build.Utilities.Core`, and packages the MSBuild targets file,
+settings files, task assembly, and copied dependencies.
 
 ---
 
@@ -84,7 +90,7 @@ Contains the MSBuild task:
 - Translates only missing entries
 - Batch processing with 20 entries per request
 - One-time domain analysis for better contextual understanding
-- Preserves technical placeholders like `{0}`, `{name}`, `%s`, `\n`, `\t`
+- Instructs the model to preserve technical placeholders like `{0}`, `{name}`, `%s`, `\n`, and `\t`
 - Mode control: `all`, `debug`, `release`, `publish`
 - Multi-targeting capable – translation runs only in the first target framework
 - `TaskHostFactory` prevents DLL locking in Visual Studio
@@ -96,15 +102,11 @@ Contains the MSBuild task:
 
 ## Installation
 
-```bash
-dotnet add package NetAI.ResxTranslator
-```
+> **TODO:** Verify the published package ID before documenting an installation command. The current
+> project files do not declare a `PackageId`.
 
-Or via `PackageReference`:
-
-```xml
-<PackageReference Include="NetAI.ResxTranslator" Version="1.0.0" />
-```
+> **TODO:** Add the verified `PackageReference` only after the published package ID and version
+> are confirmed. They are not declared in the reviewed project files.
 
 On first build, the following files are copied to the project directory if they are missing:
 
@@ -115,7 +117,7 @@ On first build, the following files are copied to the project directory if they 
 
 ## Quick Start
 
-1. Install the package.
+1. Install the published package after verifying its package ID.
 2. Build the project.
 3. Adjust `aisettings.json`.
 4. Build again – missing translations will be added.
@@ -151,9 +153,9 @@ Example `aisettings.json`:
 | Field | Type | Description | Default |
 | --- | --- | --- | --- |
 | `mode` | string | `all`, `debug`, `release`, `publish`, or a comma-separated combination | `all` |
-| `apiKey` | string | API key for cloud AI. Leave empty for local models. | `""` |
-| `context` | string | Optional context for translation | `""` |
-| `glossaryPath` | string | Path to a glossary | `""` |
+| `apiKey` | string | Configured API key field; not consumed by the current local translation path | `""` |
+| `context` | string | Configured context field; not consumed by the current translation path | `""` |
+| `glossaryPath` | string | Configured glossary path field; not consumed by the current translation path | `""` |
 | `defaultLanguage` | string | Source language, e.g., `en` | `en` |
 | `supportedLanguages` | array | Target languages, e.g., `["de", "fr", "it"]` | `[]` |
 
@@ -161,12 +163,14 @@ Example `aisettings.json`:
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `model` | string | AI model, e.g., `gpt-4o` or a local model |
-| `temperature` | number | Creativity of the AI, e.g., `0.2` |
-| `systemPrompt` | string | Optional global system prompt |
+| `model` | string | Configured model field; not consumed by the current local translation path |
+| `temperature` | number | Configured temperature field; not consumed by the current local translation path |
+| `systemPrompt` | string | Configured system prompt field; not consumed by the current local translation path |
 
 > [!NOTE]
-> The actual translation prompts are generated in `TranslationPromptBuilder`. The `systemPrompt` can serve as a global hint.
+> The actual translation prompts are generated in `TranslationPromptBuilder` and sent to the local
+> endpoint at `http://localhost:8080/v1/chat/completions`. The `aiConfiguration` values are currently
+> loaded but are not consumed by the translation execution path.
 
 ---
 
@@ -228,8 +232,8 @@ The `ResxTranslationOrchestrator`:
 4. Creates missing language files via `EnsureSupportedLanguageFiles`.
 5. Collects missing translations per file.
 6. Determines the source text via `FindSourceTextForKey`.
-7. Performs a domain analysis.
-8. Translates in batches of 20 entries.
+7. Sends the source strings to the local OpenAI-compatible endpoint for domain analysis.
+8. Translates in batches of 20 entries through the same local endpoint.
 9. Parses the AI response in the format `[KEY:...] Translation`.
 10. Saves the translations to the `.resx` file.
 
@@ -281,7 +285,7 @@ Rules:
 
 ## Placeholders
 
-Technical placeholders are preserved:
+The AI is instructed to preserve technical placeholders:
 
 - `{0}`, `{name}`
 - `%s`
@@ -333,7 +337,7 @@ RESXT001: NetAI.ResxTranslator: Task assembly not found.
 | No translation | Check `translator.mode`. |
 | No `.resx` found | Are the files in the project folder? |
 | Invalid language codes | Use culture codes, e.g., `de`, `fr`, `it`. |
-| API error | Check `apiKey`, model, and network. |
+| API error | Check the local endpoint at `http://localhost:8080/v1/chat/completions` and its network availability. |
 | DLL lock in Visual Studio | `TaskHostFactory` is already active. |
 | WPF temp project | Automatically skipped. |
 | Placeholders corrupted | Check prompt rules, possibly change model. |
@@ -343,9 +347,7 @@ RESXT001: NetAI.ResxTranslator: Task assembly not found.
 ## Security & Privacy
 
 - **No telemetry:** This package does **not** collect, transmit, or store any telemetry data. No usage statistics, no analytics, no tracking. Your data stays within your project and your chosen AI provider.
-- Never commit `apiKey` to Git.
-- Use environment variables, User Secrets, or CI secrets.
-- For local models, `apiKey` can remain empty.
+- The configured `apiKey` field is not consumed by the current local translation path.
 - Review AI translations before release, especially for technical content.
 - Enterprise customers can rely on a completely transparent, telemetry-free integration.
 
@@ -367,9 +369,13 @@ dotnet build
 
 ### Test
 
-```bash
-dotnet test
-```
+No test project or test sources are contained in either reviewed project, so `dotnet test` is not
+a project-specific command for them.
+
+### Run
+
+These projects are a class library and an MSBuild task library. They do not contain a standalone
+executable or a `Program.cs` entry point, so there is no standalone run command.
 
 ### Use Local DLL
 
