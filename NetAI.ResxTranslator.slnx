@@ -5,6 +5,8 @@
     <Platform Name="x86" />
   </Configurations>
   <Folder Name="/Projektmappenelemente/">
+    <File Path="../../../Downloads/README.md" />
+    <File Path="../../../Downloads/README_COMMON .md" />
     <File Path="../../../Downloads/unitAnIntegrationTestEnvironment.md" />
     <File Path="buisinessPlanTranslatorNuget.md" />
     <File Path="INFRASTRUKTUR.md" />
