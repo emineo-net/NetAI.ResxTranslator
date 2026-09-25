@@ -33,9 +33,9 @@ public class ResxTranslatorTask : Task
             return false;
         }
 
-        var translator = config.Translator ?? new TranslatorConfig();
+        var translatorConfig = config.Translator ?? new TranslatorConfig();
 
-        var modeInput = (translator.Mode ?? "all").ToLowerInvariant();
+        var modeInput = (translatorConfig.Mode ?? "all").ToLowerInvariant();
         var config_ = (CurrentConfiguration ?? "Debug").ToLowerInvariant();
 
         var activeModes = modeInput.Split(',').Select(m => m.Trim()).ToList();
@@ -71,20 +71,20 @@ public class ResxTranslatorTask : Task
         {
             Log.LogMessage(MessageImportance.High,
                 $"🤖 [ResxTranslator] Skipped. The current state (Config={CurrentConfiguration}, Publish={IsPublishing}) " +
-                $"is not included in the allowed modes '{translator.Mode}'.");
+                $"is not included in the allowed modes '{translatorConfig.Mode}'.");
             return true;
         }
 
         Log.LogMessage(MessageImportance.High, "🤖 [ResxTranslator] Mode condition met. Starting analysis...");
 
-        if (!string.IsNullOrEmpty(translator.Context))
+        if (!string.IsNullOrEmpty(translatorConfig.Context))
         {
-            Log.LogMessage(MessageImportance.High, $"[ResxTranslator] App context received: {translator.Context}");
+            Log.LogMessage(MessageImportance.High, $"[ResxTranslator] App context received: {translatorConfig.Context}");
         }
 
-        if (!string.IsNullOrEmpty(translator.GlossaryPath))
+        if (!string.IsNullOrEmpty(translatorConfig.GlossaryPath))
         {
-            Log.LogMessage(MessageImportance.High, $"[ResxTranslator] Glossary path received: {translator.GlossaryPath}");
+            Log.LogMessage(MessageImportance.High, $"[ResxTranslator] Glossary path received: {translatorConfig.GlossaryPath}");
         }
 
         Log.LogMessage(MessageImportance.High, "🤖 NetAI.ResxTranslator: Starting analysis...");
@@ -92,7 +92,7 @@ public class ResxTranslatorTask : Task
         var collectedIssues = new List<string>();
         var orchestrator = new ResxTranslationOrchestrator();
 
-        var result = orchestrator.ProcessProject(ProjectDir, translator, message =>
+        var result = orchestrator.ProcessProject(ProjectDir, translatorConfig, message =>
         {
             if (string.IsNullOrWhiteSpace(message))
             {
