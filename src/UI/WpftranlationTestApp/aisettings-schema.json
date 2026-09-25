@@ -4,10 +4,6 @@
   "type": "object",
   "required": [
     "version",
-    "environment",
-    "frameworks",
-    "codeStyle",
-    "generationBehavior",
     "aiConfiguration"
   ],
   "properties": {
@@ -51,85 +47,6 @@
           "description": "Zielsprachen als Kulturcodes, z. B. [\"de\", \"fr\"] (früher <SupportedLanguage>).",
           "items": { "type": "string" },
           "uniqueItems": true
-        }
-      }
-    },
-    "environment": {
-      "type": "object",
-      "required": [ "targetDotNetVersion", "testProjectName" ],
-      "properties": {
-        "targetDotNetVersion": {
-          "type": "string",
-          "enum": [ "net6.0", "net7.0", "net8.0", "net9.0", "net10.0" ],
-          "description": "Die Ziel-.NET-Version für den generierten Code."
-        },
-        "testProjectName": {
-          "type": "string",
-          "description": "Name des Testprojekts. Verwende {ProjectName} als Platzhalter."
-        }
-      }
-    },
-    "frameworks": {
-      "type": "object",
-      "required": [ "testFramework", "mockingFramework", "useFluentAssertions", "useAutoFixture" ],
-      "properties": {
-        "testFramework": {
-          "type": "string",
-          "enum": [ "xunit", "nunit", "mstest" ],
-          "description": "Das zu verwendende Test-Framework."
-        },
-        "mockingFramework": {
-          "type": "string",
-          "enum": [ "moq", "nsubstitute", "fakeiteasy" ],
-          "description": "Das zu verwendende Mocking-Framework."
-        },
-        "useFluentAssertions": {
-          "type": "boolean",
-          "description": "Gibt an, ob FluentAssertions für Assertions genutzt werden soll."
-        },
-        "useAutoFixture": {
-          "type": "boolean",
-          "description": "Gibt an, ob AutoFixture für Testdaten-Generierung genutzt werden soll."
-        }
-      }
-    },
-    "codeStyle": {
-      "type": "object",
-      "required": [ "useFileScopedNamespace", "useAsyncSuffix", "maxLineLength" ],
-      "properties": {
-        "useFileScopedNamespace": {
-          "type": "boolean",
-          "description": "Nutzt C# file-scoped namespaces statt traditioneller Blocks."
-        },
-        "useAsyncSuffix": {
-          "type": "boolean",
-          "description": "Erzwingt das Suffix 'Async' bei asynchronen Methoden."
-        },
-        "maxLineLength": {
-          "type": "integer",
-          "minimum": 60,
-          "maximum": 200,
-          "description": "Maximale Zeilenlänge vor dem Umbruch."
-        }
-      }
-    },
-    "generationBehavior": {
-      "type": "object",
-      "required": [ "testStrategy", "splitTestsByMethod", "maxTestsPerClass" ],
-      "properties": {
-        "testStrategy": {
-          "type": "string",
-          "enum": [ "Both", "Unit", "Integration" ],
-          "description": "Die Strategie bei der Testgenerierung."
-        },
-        "splitTestsByMethod": {
-          "type": "boolean",
-          "description": "Splittet Tests in separate Dateien basierend auf der Methode."
-        },
-        "maxTestsPerClass": {
-          "type": "integer",
-          "minimum": 1,
-          "description": "Maximale Anzahl an Testmethoden pro generierter Klasse."
         }
       }
     },

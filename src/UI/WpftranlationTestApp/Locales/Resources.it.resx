@@ -605,7 +605,7 @@
     <value>Inserisci una nuova email</value>
   </data>
   <data name="select columns for scraping" xml:space="preserve">
-    <value>Seleziona le colonne per lo scraping</value>
+    <value></value>
   </data>
   <data name="click one or more tags for a post." xml:space="preserve">
     <value>Fai clic su uno o più tag per un post.</value>
