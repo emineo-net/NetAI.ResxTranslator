@@ -15,14 +15,6 @@ public partial class MainWindow : Window
 
     private async void TestButton_OnClick(object sender, RoutedEventArgs e)
     {
-        //  await DownloadViaCloudFlare.DownloadWithCloudFlare();
-
-        var builder = new AiPromptBuilder(@"C:\Users\steph\source\repos\NetAI.ResxTranslator\src\UI\WpftranlationTestApp\aisettings.json");
-
-        // Angenommen, du analysierst gerade einen "OrderController"
-        var finalPrompt = await builder.BuildSystemPromptAsync();
-
-        Console.WriteLine(finalPrompt);
 
         //bool ok = ResxTranslatorRunner.Run(@"C:\Users\steph\source\repos\NetAI.ResxTranslator\src\UI\WpftranlationTestApp");
 
