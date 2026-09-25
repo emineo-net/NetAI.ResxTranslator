@@ -2,8 +2,8 @@
   "$schema": "aisettings-schema.json",
   "version": "1.1",
   "translator": {
-    //"mode": "publish",
-    "mode": "all",
+    "mode": "publish",
+    //"mode": "all",
     "apiKey": "",
     "context": "",
     "glossaryPath": "",
