@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using NetAI.ResxTranslator.Core.Services;
 
 namespace WpftranlationTestApp;
 
