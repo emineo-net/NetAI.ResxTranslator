@@ -2,72 +2,105 @@
   "$schema": "https://json-schema.org/draft-07/schema#",
   "title": "NetAI.ResxTranslator Configuration",
   "type": "object",
-  "required": [
-    "version",
-    "aiConfiguration"
-  ],
+  "required": [ "version", "translator", "aiConfiguration" ],
   "properties": {
     "$schema": {
       "type": "string"
     },
     "version": {
       "type": "string",
-      "description": "Die Version der Konfigurationsdatei.",
-      "default": "1.1"
+      "default": "1.1",
+      "description": "Die Version der Konfigurationsdatei."
     },
+
     "translator": {
       "type": "object",
       "description": "Einstellungen für den AI-Resx-Translator. Ersetzt die früheren .csproj-Properties.",
       "additionalProperties": false,
+      "required": [ "mode", "apiKey", "context", "glossaryPath", "defaultLanguage", "supportedLanguages" ],
       "properties": {
         "mode": {
           "type": "string",
-          "description": "Wann übersetzt wird: 'all' oder kommagetrennt 'debug', 'release', 'publish'.",
-          "default": "all"
+          "default": "all",
+          "description": "Wann übersetzt wird: 'all' oder kommagetrennt 'debug', 'release', 'publish'."
         },
         "apiKey": {
           "type": "string",
-          "description": "Der API-Schlüssel für den KI-Übersetzer."
+          "deprecated": true,
+          "description": "DEPRECATED – bitte aiConfiguration.apiKey oder aiConfiguration.apiKeyEnvVar verwenden. Leer lassen ('') für 'nicht gesetzt'."
         },
         "context": {
           "type": "string",
-          "description": "Zusätzlicher Kontext oder Anweisungen für den Übersetzer (Branche, Tonalität, ...)."
+          "description": "Zusätzlicher Kontext für den Übersetzer. Leer lassen ('') für 'nicht gesetzt'."
         },
         "glossaryPath": {
           "type": "string",
-          "description": "Der Pfad zur Glossar-Datei für konsistente Übersetzungen (relativ zum Projektverzeichnis)."
+          "description": "Pfad zur Glossar-Datei (relativ zum Projektverzeichnis). Leer lassen ('') für 'nicht gesetzt'."
         },
         "defaultLanguage": {
           "type": "string",
-          "description": "Kulturcode der neutralen .resx-Dateien (früher <NeutralLanguage>).",
-          "default": "en"
+          "default": "en",
+          "description": "Kulturcode der neutralen .resx-Dateien."
         },
         "supportedLanguages": {
           "type": "array",
-          "description": "Zielsprachen als Kulturcodes, z. B. [\"de\", \"fr\"] (früher <SupportedLanguage>).",
+          "description": "Zielsprachen als Kulturcodes, z. B. [\"de\", \"fr\"].",
           "items": { "type": "string" },
           "uniqueItems": true
         }
       }
     },
+
     "aiConfiguration": {
       "type": "object",
-      "required": [ "model", "temperature", "systemPrompt" ],
+      "description": "Verbindung zum OpenAI-kompatiblen LLM-Endpoint (lokal oder gehostet).",
+      "additionalProperties": false,
+      "required": [ "baseUrl", "model", "temperature", "timeoutMinutes", "systemPrompt", "apiKey", "apiKeyEnvVar" ],
       "properties": {
+        "baseUrl": {
+          "type": "string",
+          "pattern": "^$|/$",
+          "default": "http://localhost:8080/",
+          "description": "Absolute URL des Endpoints – muss mit '/' enden. Leer lassen ('') für lokalen Default 'http://localhost:8080/'. Beispiele: 'http://localhost:11434/' (Ollama), 'https://api.openai.com/'."
+        },
         "model": {
           "type": "string",
-          "description": "Das zu verwendende KI-Modell (z. B. gpt-4o, claude-3-5-sonnet)."
+          "default": "gpt-4o",
+          "description": "Modell-Bezeichner. Leer lassen ('') für Default 'gpt-4o'. Beispiele: 'llama3.1', 'claude-3-5-sonnet'."
         },
         "temperature": {
           "type": "number",
           "minimum": 0.0,
           "maximum": 2.0,
-          "description": "Kreativität des Modells (0.0 = deterministisch, höher = kreativer)."
+          "default": 0.2,
+          "description": "Kreativität (0.0 = deterministisch, 2.0 = maximal kreativ)."
+        },
+        "timeoutMinutes": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 5,
+          "description": "HTTP-Timeout in Minuten. 0 = Default (5 Minuten)."
         },
         "systemPrompt": {
           "type": "string",
-          "description": "Der System-Prompt, der die KI-Rolle und -Regeln definiert."
+          "description": "System-Prompt für das Modell. Leer lassen ('') für 'kein System-Prompt'."
+        },
+        "apiKey": {
+          "type": "string",
+          "description": "Inline-API-Key. Leer lassen ('') für 'nicht gesetzt'. Gegenseitig ausschließend mit apiKeyEnvVar (nur wenn beide nicht leer sind). Nicht ins Repository committen."
+        },
+        "apiKeyEnvVar": {
+          "type": "string",
+          "description": "Name der Umgebungsvariable mit dem API-Key. Leer lassen ('') für 'nicht gesetzt'. Gegenseitig ausschließend mit apiKey (nur wenn beide nicht leer sind)."
         }
+      },
+      "not": {
+        "description": "apiKey und apiKeyEnvVar dürfen nicht gleichzeitig befüllt sein (leere Strings sind erlaubt).",
+        "properties": {
+          "apiKey": { "minLength": 1 },
+          "apiKeyEnvVar": { "minLength": 1 }
+        },
+        "required": [ "apiKey", "apiKeyEnvVar" ]
       }
     }
   }

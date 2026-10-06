@@ -2,17 +2,20 @@
   "$schema": "aisettings-schema.json",
   "version": "1.1",
   "translator": {
-    //"mode": "publish",
     "mode": "all",
     "apiKey": "",
     "context": "",
     "glossaryPath": "",
     "defaultLanguage": "en",
-    "supportedLanguages": [ "de", "fr", "it" ]
+    "supportedLanguages": []
   },
   "aiConfiguration": {
+    "baseUrl": "http://localhost:8080/",
     "model": "gpt-4o",
     "temperature": 0.2,
-    "systemPrompt": "You are an expert .NET developer. Write clean, maintainable code following Clean Code principles. Always use the Arrange-Act-Assert (AAA) pattern."
+    "timeoutMinutes": 5,
+    "systemPrompt": "",
+    "apiKey": "",
+    "apiKeyEnvVar": ""
   }
 }

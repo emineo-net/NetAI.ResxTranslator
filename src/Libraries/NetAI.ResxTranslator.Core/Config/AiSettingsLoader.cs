@@ -27,6 +27,12 @@ public static class AiSettingsLoader
             throw new InvalidOperationException($"aisettings.json unter '{path}' konnte nicht geparst werden.");
         }
 
+        config.AiConfiguration?.Normalize();
+
+        config.AiConfiguration?.Validate();
+
         return config;
     }
+
+
 }

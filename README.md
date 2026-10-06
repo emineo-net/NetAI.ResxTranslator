@@ -1,126 +1,119 @@
-# NetAI.ResxTranslator
+## NetAI.ResxTranslator
 
-> AI-powered automatic translation of missing `.resx` entries in .NET projects — integrated through an MSBuild task.
+**AI-powered .resx translation for .NET**
 
-![.NET](https://img.shields.io/badge/.NET-netstandard2.0%20%7C%20net8.0%20%7C%20net9.0%20%7C%20net10.0-blue)
-![MSBuild](https://img.shields.io/badge/MSBuild-Task-green)
-![AI](https://img.shields.io/badge/AI-Translation-purple)
-![License](https://img.shields.io/badge/License-MIT-yellow)
+NetAI.ResxTranslator is a tool that analyzes your `.resx` resource files and automatically translates missing entries using a Large Language Model (LLM). It runs against a local OpenAI-compatible endpoint (llama.cpp, Ollama, LM Studio, …) or a hosted API such as OpenAI — you choose. It integrates seamlessly into your build process as a NuGet package or build task, keeping every supported language in sync without manual effort.
 
-> [!NOTE]
-> This NuGet package is the foundation of an **enterprise version** with additional pro features. These include support for **JSON, YAML, and YML** files, **self-hosted translations** where a manager can approve or edit translations, **glossary management**, and more.  
-> Learn more at [https://emineo-net.github.io](https://emineo-net.github.io).
+> **Note:** This is the open-source community edition, released under the MIT License.
+>
+> An Enterprise version with advanced features (e.g., team collaboration, CI/CD analytics, translation memory) is planned for the future.
+
+---
 
 ## Table of Contents
 
-- [Overview](#overview)
-- [Components](#components)
-- [Features](#features)
-- [Installation](#installation)
-- [Quick Start](#quick-start)
-- [Configuration](#configuration)
-- [Modes](#modes)
-- [How It Works](#how-it-works)
-- [Prompt Format](#prompt-format)
-- [Placeholders](#placeholders)
-- [MSBuild Integration](#msbuild-integration)
-- [Troubleshooting](#troubleshooting)
-- [Security & Privacy](#security--privacy)
-- [Development](#development)
-- [License](#license)
-
----
-
-## Overview
-
-**NetAI.ResxTranslator** is an MSBuild-integrated translation component consisting of a Core library and an MSBuild Tasks library.  
-During build or publish, it detects missing translations in `.resx` files and generates them through a local OpenAI-compatible LLM endpoint.
-
-Configuration is done via an `aisettings.json` file with a JSON schema.  
-The package injects the configuration file and schema into the target project if they do not already exist.
-
-Supported:
-
-- Local OpenAI-compatible models through `http://localhost:8080/v1/chat/completions`
-- Multiple target languages
-- Mode-dependent execution (`debug`, `release`, `publish`, `all`)
-- Multi-targeting
-- Automatic creation of missing language files
-
----
-
-## Components
-
-The project consists of two libraries:
-
-### `NetAI.ResxTranslator.Core`
-
-Contains the core logic:
-
-- `ProjectResxAnalyzer` – finds, reads, writes, and creates `.resx` files
-- `ResxTranslationOrchestrator` – orchestrates the entire translation process
-- `TranslationPromptBuilder` – generates domain and batch prompts
-- `TranslatorLanguageResolver` – validates and normalizes language codes
-- Models and configuration classes
-
-Target frameworks: `netstandard2.0`, `net8.0`, `net9.0`, and `net10.0`.  
-Project dependencies: `Microsoft.Bcl.Memory` and `Newtonsoft.Json`.
-
-### `NetAI.ResxTranslator.Tasks`
-
-Contains the MSBuild task:
-
-- `ResxTranslatorTask` – executed during build/publish
-- Loads `aisettings.json`
-- Checks the configured mode
-- Calls the orchestrator
-- Writes MSBuild logs and warnings
-
-Target framework: `netstandard2.0`.  
-The project references Core and `Microsoft.Build.Utilities.Core`, and packages the MSBuild targets file,
-settings files, task assembly, and copied dependencies.
+- Features
+- How It Works
+- Installation
+- Configuration
+  - Configuration File
+  - AI Connection Variants
+- Usage
+  - As a Build Task
+  - Programmatic API
+- Examples
+- Configuration Options
+- Roadmap
+- License
+- Contributing
 
 ---
 
 ## Features
 
-- Recursively finds all `.resx` files – excluding `bin`, `obj`, and `.git`
-- Detects languages from file names, e.g., `Resources.de.resx`
-- Creates missing `.resx` files for all `supportedLanguages`
-- Translates only missing entries
-- Batch processing with 20 entries per request
-- Per-request domain analysis for better contextual understanding
-- Instructs the model to preserve technical placeholders like `{0}`, `{name}`, `%s`, `\n`, and `\t`
-- Mode control: `all`, `debug`, `release`, `publish`
-- Multi-targeting capable – translation runs only in the first target framework
-- `TaskHostFactory` prevents DLL locking in Visual Studio
-- Can be disabled via `-p:ResxTranslatorEnabled=false`
-- Schema and sample configuration are automatically copied to the project
-- **No telemetry – zero data collection**
+- **`.resx`-aware analysis** – Finds, parses, and understands your resource files, including satellite files per culture.
+- **AI-driven translation** – Uses an LLM to fill in missing translations based on your default-language text.
+- **Domain-aware prompting** – Performs a lightweight domain analysis first (e.g., "Medical Software", "E-commerce UI") to give the model context and improve translation quality.
+- **Batch processing** – Groups missing keys into batches so a single request covers many entries.
+- **Local and cloud LLMs** – Works with any OpenAI-compatible endpoint: local servers (llama.cpp, Ollama, LM Studio) or hosted APIs (OpenAI, Azure OpenAI, custom proxies).
+- **Automatic file creation** – Creates missing `.resx` files for configured target languages.
+- **Glossary support** – Optional glossary file for consistent terminology across translations.
+- **Configurable** – Fine-tune behavior via a single `aisettings.json` file.
+- **NuGet package** – Easy to add to any .NET project.
+
+---
+
+## How It Works
+
+1. **Resource Discovery**
+
+   `ProjectResxAnalyzer` scans the project directory for all `.resx` files and parses their entries, keyed by name.
+
+2. **Language Resolution**
+
+   The default language (from `translator.defaultLanguage`) and the list of supported languages (from `translator.supportedLanguages`) are resolved. Missing files for supported languages are created on the fly.
+
+3. **Gap Detection**
+
+   For each resource file, entries without a translation are collected. Entries already translated are skipped.
+
+4. **Source Text Lookup**
+
+   For each missing key, the source text is taken from the default-language file (or any sibling file that has a value). This is the text sent to the LLM.
+
+5. **Domain Analysis (LLM call #1)**
+
+   The LLM receives a short prompt with sample source texts and returns a detected domain (e.g., "General Software UI"). This is used to prime the following translations.
+
+6. **Batch Translation (LLM call #2…n)**
+
+   Missing keys are grouped into batches. Each batch is sent to the LLM with the domain and optional glossary. The model replies with a strict format:
+
+   ```
+   [KEY:1] Übersetzung Eins
+   [KEY:2] Übersetzung Zwei
+   ```
+
+   The response is parsed with a regex; unmatched lines are ignored.
+
+7. **Write-back**
+
+   Translations are written back into the corresponding `.resx` file. Keys that couldn't be translated are marked with a placeholder so nothing is silently lost.
 
 ---
 
 ## Installation
 
-> **TODO:** Verify the published package ID before documenting an installation command. The current
-> project files do not declare a `PackageId`.
+### NuGet Package
 
-> **TODO:** Add the verified `PackageReference` only after the published package ID and version
-> are confirmed. They are not declared in the reviewed project files.
+```
+dotnet add package NetAI.ResxTranslator
+```
 
-On first build, the following files are copied to the project directory if they are missing:
+> Replace `NetAI.ResxTranslator` with the actual package ID once published.
 
-- `aisettings.json`
-- `aisettings-schema.json`
+### Build Task
+
+Add the package reference to your project and configure it to run during build. Example `.csproj` snippet:
+
+```xml
+<ItemGroup>
+  <PackageReference Include="NetAI.ResxTranslator" Version="1.0.0" />
+</ItemGroup>
+
+<Target Name="TranslateResx" BeforeTargets="Build">
+  <NetAITranslateResx ProjectDirectory="$(MSBuildProjectDirectory)"
+                      SolutionPath="$(SolutionPath)" />
+</Target>
+```
+
+> The exact MSBuild task name and parameters will be documented once the build task is finalized.
 
 ---
 
-## Quick Start
+## Configuration
 
-1. Install the published package after verifying its package ID.
-2. Build the project.
-3. Adjust `aisettings.json`.
-4. Build again – missing translations will be added.
+Configuration is provided via `aisettings.json`. The file is validated by `aisettings-schema.json` (JSON Schema, Draft 07), so editors like VS Code and Rider provide autocomplete and inline validation.
 
 Example `aisettings.json`:
 
@@ -136,274 +129,286 @@ Example `aisettings.json`:
     "defaultLanguage": "en",
     "supportedLanguages": [ "de", "fr", "it" ]
   },
-   "environment": {
-      "targetDotNetVersion": "net9.0",
-      "testProjectName": "{ProjectName}.Tests"
-   },
-   "frameworks": {
-      "testFramework": "xunit",
-      "mockingFramework": "moq",
-      "useFluentAssertions": true,
-      "useAutoFixture": true
-   },
-   "codeStyle": {
-      "useFileScopedNamespace": true,
-      "useAsyncSuffix": true,
-      "maxLineLength": 120
-   },
-   "generationBehavior": {
-      "testStrategy": "Both",
-      "splitTestsByMethod": false,
-      "maxTestsPerClass": 15
-   },
   "aiConfiguration": {
+    "baseUrl": "http://localhost:8080/",
     "model": "gpt-4o",
     "temperature": 0.2,
-    "systemPrompt": "You are an expert .NET developer. Write clean, maintainable code following Clean Code principles. Always use the Arrange-Act-Assert (AAA) pattern."
+    "timeoutMinutes": 5,
+    "systemPrompt": "",
+    "apiKey": "",
+    "apiKeyEnvVar": ""
   }
 }
 ```
 
+All fields are always present. Unused fields stay at `""` (strings) or `0` (numbers) and are treated as *not set*. The loader replaces empty values with defaults before validation, so the file above connects to a local endpoint at `http://localhost:8080/` with a 5-minute timeout and no authentication.
+
+### AI Connection Variants
+
+The `aiConfiguration` block drives the connection to the LLM. The same structure works for local and hosted endpoints — only the values change.
+
+**Required fields**
+
+| Field         | Type     | Description                                      |
+|---------------|----------|--------------------------------------------------|
+| `model`       | `string` | Model name, e.g. `gpt-4o`, `llama3.1`            |
+| `temperature` | `number` | Creativity (0.0 = deterministic, 2.0 = maximum)  |
+
+**Optional fields** — set to `""` or `0` if unused
+
+| Field            | Type     | Default (when empty)     | Description                                                        |
+|------------------|----------|--------------------------|--------------------------------------------------------------------|
+| `baseUrl`        | `string` | `http://localhost:8080/` | Endpoint URL — **must end with `/`**                                |
+| `timeoutMinutes` | `integer`| `5`                      | HTTP timeout in minutes                                             |
+| `systemPrompt`   | `string` | *(none)*                 | System role and rules for the model                                 |
+| `apiKey`         | `string` | *(none)*                 | API key directly in the file — **mutually exclusive with `apiKeyEnvVar`** |
+| `apiKeyEnvVar`   | `string` | *(none)*                 | Name of the environment variable holding the key — **mutually exclusive with `apiKey`** |
+
+> **Rule of thumb:** `apiKey` = the key itself. `apiKeyEnvVar` = only the **name** of the environment variable that holds the key. Only one of the two may be non-empty.
+
+#### Variant 1 — Local server, no authentication
+
+```json
+"aiConfiguration": {
+  "baseUrl": "http://localhost:8080/",
+  "model": "gpt-4o",
+  "temperature": 0.2,
+  "timeoutMinutes": 5,
+  "systemPrompt": "",
+  "apiKey": "",
+  "apiKeyEnvVar": ""
+}
+```
+
+#### Variant 2 — Local server on a different port (e.g. Ollama)
+
+```json
+"aiConfiguration": {
+  "baseUrl": "http://localhost:11434/",
+  "model": "llama3.1",
+  "temperature": 0.2,
+  "timeoutMinutes": 10,
+  "systemPrompt": "",
+  "apiKey": "",
+  "apiKeyEnvVar": ""
+}
+```
+
+> The trailing slash on `baseUrl` is required — the schema enforces it.
+> Local servers often ignore `model`; setting it anyway is harmless.
+
+#### Variant 3 — Local server with token
+
+```json
+"aiConfiguration": {
+  "baseUrl": "http://localhost:11434/",
+  "model": "llama3.1",
+  "temperature": 0.2,
+  "timeoutMinutes": 5,
+  "systemPrompt": "",
+  "apiKey": "local-secret",
+  "apiKeyEnvVar": ""
+}
+```
+
+> ⚠️ **Do not commit real values** into version control. Prefer Variant 4.
+
+#### Variant 4 — Hosted API via environment variable (recommended)
+
+The key lives outside the file and is read at runtime. This makes `aisettings.json` safe to commit.
+
+```json
+"aiConfiguration": {
+  "baseUrl": "https://api.openai.com/",
+  "model": "gpt-4o",
+  "temperature": 0.2,
+  "timeoutMinutes": 5,
+  "systemPrompt": "You are an expert translator for software UI strings. Preserve placeholders like {0}, {1}, and keep translations concise.",
+  "apiKey": "",
+  "apiKeyEnvVar": "OPENAI_API_KEY"
+}
+```
+
+Set the environment variable:
+
+**Windows (PowerShell, persistent):**
+```powershell
+setx OPENAI_API_KEY "sk-…"
+```
+
+**Linux / macOS:**
+```bash
+export OPENAI_API_KEY="sk-…"
+```
+
+**GitHub Actions:**
+```yaml
+env:
+  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+```
+
+**Docker:**
+```bash
+docker run -e OPENAI_API_KEY="sk-…" your-image
+```
+
+#### Variant 5 — Azure OpenAI
+
+```json
+"aiConfiguration": {
+  "baseUrl": "https://<your-resource>.openai.azure.com/",
+  "model": "gpt-4o",
+  "temperature": 0.2,
+  "timeoutMinutes": 5,
+  "systemPrompt": "",
+  "apiKey": "",
+  "apiKeyEnvVar": "AZURE_OPENAI_KEY"
+}
+```
+
+#### Variant 6 — Custom proxy / corporate endpoint
+
+```json
+"aiConfiguration": {
+  "baseUrl": "https://llm.company.local/",
+  "model": "internal-model",
+  "temperature": 0.2,
+  "timeoutMinutes": 15,
+  "systemPrompt": "",
+  "apiKey": "",
+  "apiKeyEnvVar": "INTERNAL_LLM_TOKEN"
+}
+```
+
+#### Rules & pitfalls
+
+- **`apiKey` and `apiKeyEnvVar` are mutually exclusive.** Setting both to non-empty values produces a validation error. Leaving both at `""` is valid and means *no authentication*.
+- **Empty strings mean *not set*.** `"baseUrl": ""` falls back to `http://localhost:8080/`. `"timeoutMinutes": 0` falls back to `5`.
+- **`baseUrl`, if given, must end with `/`.** `http://localhost:11434` is invalid; `http://localhost:11434/` is correct.
+- **Env-var names are case-sensitive** on Linux and macOS. `OPENAI_API_KEY` ≠ `openai_api_key`.
+- **If the environment variable is not set**, no `Authorization` header is sent. Cloud providers will return `401`; local servers without auth behave as expected.
+- **Never commit secrets.** Prefer Variant 4 for cloud endpoints.
+
 ---
 
-## Configuration
+## Usage
+
+### As a Build Task
+
+Once configured, the translator runs automatically during your build. It will:
+
+- Scan the project directory for `.resx` files
+- Detect entries without a translation
+- Send them to the configured LLM in batches
+- Write translations back into the corresponding `.resx` file
+- Skip entries that are already translated
+
+### Programmatic API
+
+You can also use the orchestrator directly in your own code:
+
+```csharp
+using NetAI.ResxTranslator.Core;
+using NetAI.ResxTranslator.Core.Config;
+
+var config = AiSettingsLoader.Load(@"C:\MyProject");
+
+var orchestrator = new ResxTranslationOrchestrator();
+
+ResxTranslationResult result = await orchestrator.ProcessProject(
+    projectDir: @"C:\MyProject",
+    settings: config.Translator!,
+    logInfo: msg => Console.WriteLine(msg));
+
+if (!result.IsSuccess)
+{
+    Console.Error.WriteLine(result.ErrorMessage);
+}
+```
+
+> **Note:** `ResxTranslationOrchestrator` is the current entry point. The name may change in future releases to better reflect its purpose.
+
+---
+
+## Examples
+
+### Input passed to the model
+
+```
+[KEY:1] Greeting_Label ||| Hello, world!
+[KEY:2] Save_Button ||| Save
+[KEY:3] Error_FileNotFound ||| The file '{0}' could not be found.
+```
+
+### Output returned by the model
+
+```
+[KEY:1] Hallo, Welt!
+[KEY:2] Speichern
+[KEY:3] Die Datei '{0}' wurde nicht gefunden.
+```
+
+### Snippet from the resulting `.resx`
+
+```xml
+<data name="Greeting_Label" xml:space="preserve">
+  <value>Hallo, Welt!</value>
+</data>
+<data name="Save_Button" xml:space="preserve">
+  <value>Speichern</value>
+</data>
+<data name="Error_FileNotFound" xml:space="preserve">
+  <value>Die Datei '{0}' wurde nicht gefunden.</value>
+</data>
+```
+
+---
+
+## Configuration Options
+
+### Top-level
+
+| Option    | Type   | Default | Description                     |
+|-----------|--------|---------|---------------------------------|
+| `version` | string | `1.1`   | Configuration format version    |
 
 ### `translator`
 
-| Field | Type | Description | Default |
-| --- | --- | --- | --- |
-| `mode` | string | `all`, `debug`, `release`, `publish`, or a comma-separated combination | `all` |
-| `apiKey` | string | Configured API key field; not consumed by the current local translation path | `""` |
-| `context` | string | Configured context field; not consumed by the current translation path | `""` |
-| `glossaryPath` | string | Configured glossary path field; not consumed by the current translation path | `""` |
-| `defaultLanguage` | string | Source language, e.g., `en` | `en` |
-| `supportedLanguages` | array | Target languages, e.g., `["de", "fr", "it"]` | `[]` |
+| Option                | Type     | Default | Description                                                       |
+|-----------------------|----------|---------|-------------------------------------------------------------------|
+| `mode`                | string   | `all`   | `all` or a comma-separated list: `debug`, `release`, `publish`    |
+| `apiKey`              | string   | `""`    | **Deprecated** — use `aiConfiguration.apiKey` / `apiKeyEnvVar`    |
+| `context`             | string   | `""`    | Additional context for the translator (industry, tone, …)         |
+| `glossaryPath`        | string   | `""`    | Path to a glossary file for consistent terminology                |
+| `defaultLanguage`     | string   | `en`    | Culture code of the neutral `.resx` files                         |
+| `supportedLanguages`  | string[] | `[]`    | Target culture codes, e.g. `["de", "fr"]`                         |
 
 ### `aiConfiguration`
 
-| Field | Type | Description |
-| --- | --- | --- |
-| `model` | string | Configured model field; not consumed by the current local translation path |
-| `temperature` | number | Configured temperature field; not consumed by the current local translation path |
-| `systemPrompt` | string | Configured system prompt field; not consumed by the current local translation path |
-
-> [!NOTE]
-> The actual translation prompts are generated in `TranslationPromptBuilder` and sent to the local
-> endpoint at `http://localhost:8080/v1/chat/completions`. The `aiConfiguration` values are currently
-> loaded but are not consumed by the translation execution path.
-
----
-
-## Modes
-
-The mode is controlled via `translator.mode`.
-
-| Mode | Meaning |
-| --- | --- |
-| `all` | Always run |
-| `debug` | Only on Debug build and not on Publish |
-| `release` | Only on Release build and not on Publish |
-| `publish` | Only on Publish |
-
-Multiple modes can be combined:
-
-```json
-"mode": "debug,publish"
-```
+| Option           | Type     | Default (empty)          | Description                                                        |
+|------------------|----------|--------------------------|--------------------------------------------------------------------|
+| `baseUrl`        | string   | `http://localhost:8080/` | OpenAI-compatible endpoint — must end with `/`                     |
+| `model`          | string   | `gpt-4o`                 | Model identifier                                                   |
+| `temperature`    | number   | `0.2`                    | Sampling temperature (0.0–2.0)                                     |
+| `timeoutMinutes` | integer  | `5`                      | HTTP timeout in minutes                                            |
+| `systemPrompt`   | string   | *(none)*                 | System prompt for the model                                        |
+| `apiKey`         | string   | *(none)*                 | Inline API key (mutually exclusive with `apiKeyEnvVar`)            |
+| `apiKeyEnvVar`   | string   | *(none)*                 | Environment variable holding the API key (mutually exclusive with `apiKey`) |
 
 ---
 
-## How It Works
+## Roadmap
 
-### MSBuild Targets
+- Publish stable NuGet package
+- Add MSBuild task documentation
+- Translation memory to avoid retranslating identical strings
+- Glossary validation (warn when a glossary term is not respected)
+- Enterprise version with:
+  - Team dashboards
+  - CI/CD pipeline analytics
+  - Translation quality scoring
 
-The file `NetAI.ResxTranslator.Tasks.targets` controls the integration:
-
-1. **`SetupResxTranslatorSettings`**  
-   Copies `aisettings.json` and `aisettings-schema.json` into the project if they are missing.  
-   Adds them as `None` items with `CopyToOutputDirectory`.
-
-2. **`RunResxTranslation`**  
-   Calls the `ResxTranslatorTask` – depending on the mode and only in the first target framework.
-
-3. **`IncludeGeneratedResx`**  
-   Includes newly created `.resx` files as `EmbeddedResource` within the same build.
-
-4. **`RunResxTranslationOnPublish`**  
-   Fallback for Visual Studio Publish if `_IsPublishing` is not set.
-
-### Task
-
-The `ResxTranslatorTask`:
-
-- Loads `aisettings.json`
-- Checks the configured mode against `Configuration` and `IsPublishing`
-- Skips WPF temp projects (`*_wpftmp`)
-- Calls the `ResxTranslationOrchestrator`
-- Logs errors, warnings, and information to MSBuild
-
-### Orchestrator
-
-The `ResxTranslationOrchestrator`:
-
-1. Finds all `.resx` files.
-2. Reads them into `ResxFileInfo` objects.
-3. Resolves default and supported languages.
-4. Creates missing language files via `EnsureSupportedLanguageFiles`.
-5. Collects missing translations per file.
-6. Determines the source text via `FindSourceTextForKey`.
-7. Sends the source strings to the local OpenAI-compatible endpoint for domain analysis.
-8. Translates in batches of 20 entries through the same local endpoint.
-9. Parses the AI response in the format `[KEY:...] Translation`.
-10. Saves the translations to the `.resx` file.
-
-### PromptBuilder
-
-The `TranslationPromptBuilder`:
-
-- Generates a prompt for domain analysis.
-- Splits entries into batches of 20.
-- Creates strict formatting rules for the AI.
-- Uses a standard or alternative prompt depending on the key style.
-
-### LanguageResolver
-
-The `TranslatorLanguageResolver`:
-
-- Validates culture codes via `CultureInfo`.
-- Normalizes `defaultLanguage`.
-- Filters invalid `supportedLanguages`.
-- Fallback is `en`.
-
----
-
-## Prompt Format
-
-The AI receives input in the following format:
-
-```text
-[KEY:Buttons.Cancel] ||| Cancel
-[KEY:Messages.WelcomeUser] ||| Welcome back, {0}!
-```
-
-Expected output:
-
-```text
-[KEY:Buttons.Cancel] Abbrechen
-[KEY:Messages.WelcomeUser] Willkommen zurück, {0}!
-```
-
-Rules:
-
-- Each line starts with `[KEY:...]`.
-- The key is not changed.
-- No Markdown code blocks.
-- No explanations.
-- Only the raw translation lines.
-
----
-
-## Placeholders
-
-The AI is instructed to preserve technical placeholders:
-
-- `{0}`, `{name}`
-- `%s`
-- `\n`, `\t`
-- HTML/XML fragments, if present
-
-The AI is instructed not to translate or alter placeholders.
-
----
-
-## MSBuild Integration
-
-### Disable
-
-```bash
-dotnet build -p:ResxTranslatorEnabled=false
-```
-
-### Multi-Targeting
-
-With multiple target frameworks, translation runs only in the first TFM:
-
-```xml
-<TargetFrameworks>net8.0;net48</TargetFrameworks>
-```
-
-### DLL Lookup
-
-The task searches for the assembly:
-
-1. In the NuGet package under `..\tasks\netstandard2.0\NetAI.ResxTranslator.Tasks.dll`
-2. Locally in the `build` folder
-
-### Warning for Missing Assembly
-
-If the task DLL is not found, the following appears:
-
-```text
-RESXT001: NetAI.ResxTranslator: Task assembly not found.
-```
-
----
-
-## Troubleshooting
-
-| Problem | Solution |
-| --- | --- |
-| `RESXT001` | Check that the NuGet package is installed correctly. |
-| No translation | Check `translator.mode`. |
-| No `.resx` found | Are the files in the project folder? |
-| Invalid language codes | Use culture codes, e.g., `de`, `fr`, `it`. |
-| API error | Check the local endpoint at `http://localhost:8080/v1/chat/completions` and its network availability. |
-| DLL lock in Visual Studio | `TaskHostFactory` is already active. |
-| WPF temp project | Automatically skipped. |
-| Placeholders corrupted | Check prompt rules, possibly change model. |
-
----
-
-## Security & Privacy
-
-- **No telemetry:** This package does **not** collect, transmit, or store any telemetry data. No usage statistics, no analytics, no tracking. Your data stays within your project and your chosen AI provider.
-- The configured `apiKey` field is not consumed by the current local translation path.
-- Review AI translations before release, especially for technical content.
-- Enterprise customers can rely on a completely transparent, telemetry-free integration.
-
----
-
-## Development
-
-### Prerequisites
-
-- .NET SDK
-- MSBuild
-- Visual Studio or JetBrains Rider
-
-### Build
-
-```bash
-dotnet build
-```
-
-### Test
-
-No test project or test sources are contained in either reviewed project, so `dotnet test` is not
-a project-specific command for them.
-
-### Run
-
-These projects are a class library and an MSBuild task library. They do not contain a standalone
-executable or a `Program.cs` entry point, so there is no standalone run command.
-
-### Use Local DLL
-
-The targets support a local DLL in the `build` folder:
-
-```text
-build/NetAI.ResxTranslator.Tasks.dll
-```
+> **Done:** Support for external LLM providers (OpenAI, Azure OpenAI, and any other OpenAI-compatible endpoint) is available today via the `aiConfiguration` block — see *AI Connection Variants* above.
 
 ---
 
@@ -413,4 +418,24 @@ This project is licensed under the **MIT License**.
 
 See the [LICENSE](LICENSE) file for details.
 
-**No telemetry. No data collection. Enterprise-ready.**
+---
+
+## Contributing
+
+Contributions are welcome! Please open an issue or submit a pull request.
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Open a pull request
+
+Please ensure your code follows the existing style and includes appropriate tests.
+
+---
+
+## Acknowledgments
+
+- Built around the standard `.resx` format used across the .NET ecosystem
+- Works with local and hosted LLMs through a single OpenAI-compatible interface
+- Inspired by the need to keep multi-language applications in sync without manual effort
