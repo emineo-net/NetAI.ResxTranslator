@@ -6,6 +6,7 @@
   </Configurations>
   <Folder Name="/Projektmappenelemente/">
     <File Path="buisinessPlanTranslatorNuget.md" />
+    <File Path="creatLocalNuget.bat" />
     <File Path="INFRASTRUKTUR.md" />
     <File Path="RebuildNetAIResxTranslator.bat" />
     <File Path="TODO.md" />

@@ -1,0 +1,51 @@
+name: Publish NuGet Package
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    env:
+      PROJECT_PATH: src/Libraries/NetAI.ResxTranslator.Tasks/NetAI.ResxTranslator.Tasks.csproj
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore "$PROJECT_PATH"
+
+      - name: Build
+        run: dotnet build "$PROJECT_PATH" --configuration Release --no-restore
+
+      - name: Pack
+        run: dotnet pack "$PROJECT_PATH" --configuration Release --no-build --output artifacts
+
+      - name: NuGet Login (OIDC -> Temporary API Key)
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: 'StephanEmmermann'
+
+      - name: Push to NuGet.org
+        run: dotnet nuget push artifacts/*.nupkg --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+
+      - name: Upload artifacts (optional)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nupkg
+          path: artifacts/*.nupkg
+          if-no-files-found: warn
