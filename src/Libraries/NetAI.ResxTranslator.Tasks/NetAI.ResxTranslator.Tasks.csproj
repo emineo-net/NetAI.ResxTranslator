@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
@@ -17,7 +17,7 @@
 		<PackageId>NetAI.ResxTranslator.Tasks</PackageId>
 		<Authors>Stephan Emmermann</Authors>
 		<Company>emineo-net</Company>
-		<Description>MSBuild-Task zur KI-gestützten Übersetzung von .resx-Ressourcendateien (emineo-net).</Description>
+		<Description>MSBuild-Task zur KI-gestÃ¼tzten Ãœbersetzung von .resx-Ressourcendateien (emineo-net).</Description>
 		<PackageTags>msbuild;task;ai;resx;translation;localization;emineo</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageProjectUrl>https://github.com/emineo-net/NetAI.ResxTranslator</PackageProjectUrl>
@@ -27,7 +27,7 @@
 
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 
-		<VersionPrefix>1.0.0</VersionPrefix>
+		<VersionPrefix>1.0.1</VersionPrefix>
 		<BuildTimestamp>$([System.DateTime]::Now.ToString("yyyyMMddHHmm"))</BuildTimestamp>
 		<VersionSuffix>dev.$(BuildTimestamp)</VersionSuffix>
 
