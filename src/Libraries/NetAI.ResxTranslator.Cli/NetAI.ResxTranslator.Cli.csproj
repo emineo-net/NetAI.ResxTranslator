@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>netai-resx</AssemblyName>
+    <RootNamespace>NetAI.ResxTranslator.Cli</RootNamespace>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>netai-resx</ToolCommandName>
+    <PackageId>NetAI.ResxTranslator.Cli</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Spectre.Console.Cli" />
+    <PackageReference Include="Newtonsoft.Json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NetAI.ResxTranslator.Core\NetAI.ResxTranslator.Core.csproj" />
+  </ItemGroup>
+
+</Project>

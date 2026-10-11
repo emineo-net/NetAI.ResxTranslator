@@ -13,6 +13,7 @@
   </Folder>
   <Folder Name="/src/" />
   <Folder Name="/src/Libraries/">
+    <Project Path="src/Libraries/NetAI.ResxTranslator.Cli/NetAI.ResxTranslator.Cli.csproj" />
     <Project Path="src/Libraries/NetAI.ResxTranslator.Core/NetAI.ResxTranslator.Core.csproj" />
     <Project Path="src/Libraries/NetAI.ResxTranslator.Tasks/NetAI.ResxTranslator.Tasks.csproj" />
   </Folder>
