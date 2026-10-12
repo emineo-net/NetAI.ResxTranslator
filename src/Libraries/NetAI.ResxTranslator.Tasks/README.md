@@ -15,12 +15,14 @@ This README covers the **MSBuild task / NuGet package**. For the full project ov
 - [Why a Build Task?](#why-a-build-task)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
+- [Getting a Local LLM Running](#getting-a-local-llm-running)
 - [Build Integration](#build-integration)
 - [Build-Time Switches](#build-time-switches)
 - [Mode-Based Execution](#mode-based-execution)
 - [Multi-Targeting & WPF](#multi-targeting--wpf)
 - [Troubleshooting](#troubleshooting)
 - [Configuration](#configuration)
+- [Enterprise Edition — Help Us Prioritize It](#enterprise-edition--help-us-prioritize-it)
 - [License](#license)
 
 ---
@@ -70,7 +72,7 @@ Both are added to the project as `None` items with `CopyToOutputDirectory=Preser
 
 Your `de.resx`, `fr.resx`, `it.resx` files — even the ones that don't exist yet — will be created and filled in.
 
-Minimal `aisettings.json`:
+Minimal `aisettings.json` — assuming a local model on `http://localhost:8080/` (which is what our companion app **LLMRunner** serves out of the box):
 
 ```json
 {
@@ -82,14 +84,62 @@ Minimal `aisettings.json`:
     "supportedLanguages": ["de", "fr", "it"]
   },
   "aiConfiguration": {
-    "baseUrl": "http://localhost:11434/",
-    "model": "llama3.1",
+    "baseUrl": "http://localhost:8080/",
+    "model": "local-model",
     "temperature": 0.2,
-    "timeoutMinutes": 5,
-    "apiKey": ""
+    "timeoutMinutes": 10
   }
 }
 ```
+
+---
+
+## Getting a Local LLM Running
+
+You have three ways to get an OpenAI-compatible model on your machine:
+
+### Option A — LLMRunner *(recommended)*
+
+**LLMRunner** is a companion WPF app from the same authors. It lets you:
+
+- Browse a curated list of popular LLMs with **direct HuggingFace download links**.
+- **Chat with the model** before you trust it with your resource files.
+- **Serve it on `http://localhost:8080/`** with one click — the exact address `aisettings.json` expects by default.
+
+Zero terminals. Zero flags. Find it in the same repository profile or the releases page.
+
+### Option B — Ollama + Qwen 2.5 14B
+
+[Qwen 2.5 14B](https://ollama.com/library/qwen2.5) is a strong, multilingual open-weights model that fits on a 16 GB machine, follows structured prompt formats reliably, and produces high-quality translations for European languages. A great default for `.resx` localization.
+
+```bash
+# 1. Install Ollama from https://ollama.com/download
+# 2. Pull the model
+ollama pull qwen2.5:14b
+
+# 3. Start the server (listens on http://localhost:11434/)
+ollama serve
+```
+
+Point `aisettings.json` at it:
+
+```json
+"aiConfiguration": {
+  "baseUrl": "http://localhost:11434/",
+  "model": "qwen2.5:14b",
+  "temperature": 0.2,
+  "timeoutMinutes": 10,
+  "systemPrompt": "",
+  "apiKey": "",
+  "apiKeyEnvVar": ""
+}
+```
+
+> The trailing slash on `baseUrl` is required.
+
+### Option C — Any other OpenAI-compatible endpoint
+
+LM Studio, llama.cpp server, or a hosted API. See the [solution README](../../../README.md#ai-connection-variants) for all variants.
 
 ---
 
@@ -185,7 +235,8 @@ Check the following in order:
 
 That's the LLM, not the task. Options:
 
-- Use a local model on a fast machine (Ollama with a 7B–8B model is plenty for UI strings).
+- Use **LLMRunner** and pick a quantized 14B model — fast enough on a modern laptop GPU.
+- Try **Ollama with `qwen2.5:14b`** — see [Getting a Local LLM Running](#getting-a-local-llm-running).
 - Switch `mode` to `publish` so translation only runs before deployment.
 - Keep `supportedLanguages` focused — every declared language is a full pipeline run.
 
@@ -200,6 +251,29 @@ Task-specific setting:
 | Option                | Type     | Default | Description                                                       |
 |-----------------------|----------|---------|-------------------------------------------------------------------|
 | `translator.mode`     | string   | `all`   | `all` or comma-separated: `debug`, `release`, `publish`           |
+
+---
+
+## Enterprise Edition — Help Us Prioritize It
+
+> **If you like this package and think your team would benefit from a supported, more capable edition — please tell your employer.** The Enterprise roadmap is driven by real demand.
+
+The community edition is and will remain MIT-licensed. An **Enterprise edition** is planned on top of this codebase with features like:
+
+- Centralized glossaries and terminology governance
+- Audit trails and approval workflows
+- Translation memory shared across projects
+- Provider governance and policy enforcement
+- CI/CD-native reporting and quality scoring
+- Team dashboards for translation coverage and drift
+
+**How you can help:**
+
+1. Mention the project to your team lead, architect, or in your next 1:1.
+2. Open an issue with the label **`enterprise-interest`** describing what your team would need.
+3. Star the repository — Enterprise milestones are announced there first.
+
+See the [full Enterprise section in the solution README](../../../README.md#enterprise-edition--help-us-prioritize-it).
 
 ---
 

@@ -16,6 +16,7 @@
 
 - [What Is It?](#what-is-it)
 - [The Three Pillars](#the-three-pillars)
+- [Meet LLMRunner](#meet-llmrunner)
 - [Features](#features)
 - [How It Works](#how-it-works)
 - [Requirements](#requirements)
@@ -24,11 +25,12 @@
   - [2. Command-Line Tool (`netai-resx`)](#2-command-line-tool-netai-resx)
   - [3. Programmatic API](#3-programmatic-api)
 - [Configuration — `aisettings.json`](#configuration--aisettingsjson)
+  - [Getting Started with Ollama + Qwen 2.5 14B](#getting-started-with-ollama--qwen-25-14b)
   - [AI Connection Variants](#ai-connection-variants)
   - [Rules & Pitfalls](#rules--pitfalls)
 - [Repository Layout](#repository-layout)
 - [Roadmap](#roadmap)
-- [Enterprise](#enterprise)
+- [Enterprise Edition — Help Us Prioritize It](#enterprise-edition--help-us-prioritize-it)
 - [License](#license)
 - [Contributing](#contributing)
 - [Acknowledgements](#acknowledgements)
@@ -55,9 +57,6 @@ Traditional options are all painful:
 
 The result: your `de.resx`, `fr.resx`, `ja.resx` files stay permanently in sync with the source — with **zero ongoing effort**.
 
-> **Community edition.** This repository is the MIT-licensed open-source core.
-> An **Enterprise edition** with team collaboration, CI/CD analytics, and translation memory is planned — see [Enterprise](#enterprise).
-
 ---
 
 ## The Three Pillars
@@ -79,19 +78,38 @@ Detailed documentation lives next to each project:
 
 ---
 
+## Meet LLMRunner
+
+> **A companion tool from the same authors.** You don't need it to use NetAI.ResxTranslator — but it removes the last excuse not to try a local model.
+
+**LLMRunner** is a small WPF application that turns "I'd like to try a local LLM" into "I'm chatting with one in two minutes":
+
+- **Pick from popular models** — a curated list with direct **HuggingFace** download links, so you don't have to hunt for GGUF files and quantizations that actually work.
+- **Chat with the model before wiring it up** — sanity-check translation quality on your own strings, not on someone else's benchmark.
+- **Serve it on `http://localhost:8080/` with one click** — exactly the address `aisettings.json` expects by default. No environment variables, no command-line flags, no guesswork.
+
+That means the whole "get a local LLM running" step collapses into: open LLMRunner → pick a model → click *Serve*. From there, `dotnet build` will already find your model.
+
+> 👉 Find **LLMRunner** in the same repository profile or the releases page.
+
+If you prefer to run a model server yourself (Ollama, LM Studio, llama.cpp), that's fine too — NetAI.ResxTranslator speaks to any OpenAI-compatible endpoint. The sections below cover both.
+
+---
+
 ## Features
 
 - **`.resx`-aware analysis** — Discovers, parses, and understands your resource files, including satellite files per culture. Ignores `bin/`, `obj/`, and `.git/`.
 - **AI-driven translation** — Fills in missing entries based on your default-language text. Already-translated entries are never re-sent.
 - **Domain-aware prompting** — A one-shot analysis call detects the software's domain (e.g., *Medical Software*, *E-commerce UI*, *Automotive Infotainment*) and injects it into every subsequent translation prompt. Terminology feels native, not literal.
 - **Batch processing** — Missing keys are grouped into batches of 20, so a single request covers many entries and token cost stays low.
-- **Local *and* cloud LLMs** — Works with any OpenAI-compatible endpoint: llama.cpp, Ollama, LM Studio, OpenAI, Azure OpenAI, or your own corporate proxy.
+- **Local *and* cloud LLMs** — Works with any OpenAI-compatible endpoint: LLMRunner, llama.cpp, Ollama, LM Studio, OpenAI, Azure OpenAI, or your own corporate proxy.
 - **Placeholder-safe** — `{0}`, `{name}`, `%s`, `\n`, `\t` are preserved verbatim. The model is instructed to treat them as immutable, and the response parser validates the output.
 - **Automatic file creation** — Declare `supportedLanguages` and missing satellite `.resx` files are generated from the neutral resource on the fly.
 - **Idempotent & incremental** — Only entries with empty values are translated. Re-running is cheap.
 - **One config file** — All behavior is driven by `aisettings.json` with full JSON Schema validation in VS, Rider, and VS Code.
 - **Two entry points, one engine** — NuGet build task and `netai-resx` CLI share the same `Core`.
 - **Safe by default** — Skips design-time builds, respects multi-targeting, can be disabled per build.
+- **Companion local-LLM runner** — LLMRunner gets you from zero to `localhost:8080` without a terminal.
 
 ---
 
@@ -142,7 +160,8 @@ Progress, warnings, and errors surface as native MSBuild messages (`ResxTranslat
 - .NET SDK **6.0 or later** for the host project. The task itself runs on `netstandard2.0` inside MSBuild's runtime.
 - For the CLI: .NET **9.0 SDK** or later runtime.
 - An **OpenAI-compatible endpoint**:
-  - **Local**: [llama.cpp server](https://github.com/ggerganov/llama.cpp), [LM Studio](https://lmstudio.ai/), [Ollama](https://ollama.com/), …
+  - **Recommended for local use**: **LLMRunner** — pick a model, click *Serve*, done.
+  - **Also supported**: [llama.cpp server](https://github.com/ggerganov/llama.cpp), [LM Studio](https://lmstudio.ai/), [Ollama](https://ollama.com/), …
   - **Hosted**: OpenAI, Azure OpenAI, or any gateway exposing `/v1/chat/completions`.
 
 ---
@@ -219,8 +238,8 @@ Whether you use the task or the CLI, everything is driven by a single `aisetting
     "supportedLanguages": ["de", "fr", "it"]
   },
   "aiConfiguration": {
-    "baseUrl": "http://localhost:11434/",
-    "model": "llama3.1",
+    "baseUrl": "http://localhost:8080/",
+    "model": "local-model",
     "temperature": 0.2,
     "timeoutMinutes": 5,
     "apiKey": ""
@@ -230,6 +249,52 @@ Whether you use the task or the CLI, everything is driven by a single `aisetting
 
 All fields are always present. Unused fields stay at `""` (strings) or `0` (numbers) and are treated as *not set*. The loader replaces empty values with defaults before validation.
 
+### Getting Started with Ollama + Qwen 2.5 14B
+
+**Qwen 2.5 14B** is a strong, compact, multilingual open-weights model that fits comfortably on a 16 GB machine. It follows structured prompt formats reliably (important for our `[KEY:...]` output format), and it handles European languages — German, French, Italian, Spanish, Portuguese — with native-quality vocabulary. It's an excellent default for NetAI.ResxTranslator if you don't already have a preferred model.
+
+**Step 1 — Install Ollama** from [ollama.com/download](https://ollama.com/download).
+
+**Step 2 — Pull the model and start the server:**
+
+```bash
+ollama pull qwen2.5:14b
+ollama serve
+```
+
+Ollama listens on `http://localhost:11434/` and exposes an OpenAI-compatible endpoint at `/v1/chat/completions` — exactly the shape NetAI.ResxTranslator expects.
+
+**Step 3 — Point `aisettings.json` at it:**
+
+```json
+{
+  "$schema": "aisettings-schema.json",
+  "version": "1.1",
+  "translator": {
+    "mode": "all",
+    "defaultLanguage": "en",
+    "supportedLanguages": ["de", "fr", "it"]
+  },
+  "aiConfiguration": {
+    "baseUrl": "http://localhost:11434/",
+    "model": "qwen2.5:14b",
+    "temperature": 0.2,
+    "timeoutMinutes": 10,
+    "systemPrompt": "",
+    "apiKey": "",
+    "apiKeyEnvVar": ""
+  }
+}
+```
+
+That's it. Build (or run `netai-resx translate`) and the model is picked up.
+
+> **Tips:**
+> - The trailing slash on `baseUrl` is required.
+> - `timeoutMinutes` of `10` is a good starting point for a 14B model on CPU; on a modern GPU, `5` is usually enough.
+> - Qwen 2.5 14B handles the domain-analysis step (the first, one-shot prompt) well, but if you see generic domain labels like *General Software UI*, that's fine — the per-batch prompts are what matters most.
+> - If you'd rather not touch a terminal at all, **LLMRunner** does all of this — download, chat, and serve on `localhost:8080` — in a single window. See [Meet LLMRunner](#meet-llmrunner).
+
 ### AI Connection Variants
 
 The same `aiConfiguration` block works for every endpoint — only the values change.
@@ -238,41 +303,35 @@ The same `aiConfiguration` block works for every endpoint — only the values ch
 
 | Field         | Type     | Description                                      |
 |---------------|----------|--------------------------------------------------|
-| `model`       | `string` | Model name, e.g. `gpt-4o`, `llama3.1`            |
-| `temperature` | `number` | Creativity (0.0 = deterministic, 2.0 = maximum)  |
+| `model`       | `string` | Model name, e.g. `gpt-4o`, `qwen2.5:14b`.        |
+| `temperature` | `number` | Creativity (0.0 = deterministic, 2.0 = maximum). |
 
 **Optional fields** — set to `""` or `0` if unused
 
 | Field            | Type     | Default (when empty)     | Description                                                              |
 |------------------|----------|--------------------------|--------------------------------------------------------------------------|
-| `baseUrl`        | `string` | `http://localhost:8080/` | Endpoint URL — **must end with `/`**                                      |
-| `timeoutMinutes` | `integer`| `5`                      | HTTP timeout in minutes                                                   |
-| `systemPrompt`   | `string` | *(none)*                 | System role and rules for the model                                       |
-| `apiKey`         | `string` | *(none)*                 | API key directly in the file — **mutually exclusive with `apiKeyEnvVar`**  |
-| `apiKeyEnvVar`   | `string` | *(none)*                 | Name of the env var holding the key — **mutually exclusive with `apiKey`** |
+| `baseUrl`        | `string` | `http://localhost:8080/` | Endpoint URL — **must end with `/`**.                                    |
+| `timeoutMinutes` | `integer`| `5`                      | HTTP timeout in minutes.                                                 |
+| `systemPrompt`   | `string` | *(none)*                 | System role and rules for the model.                                     |
+| `apiKey`         | `string` | *(none)*                 | API key directly in the file — **mutually exclusive with `apiKeyEnvVar`**. |
+| `apiKeyEnvVar`   | `string` | *(none)*                 | Name of the env var holding the key — **mutually exclusive with `apiKey`**. |
 
 > **Rule of thumb:** `apiKey` = the key itself. `apiKeyEnvVar` = only the **name** of the environment variable that holds the key. Only one of the two may be non-empty.
 
-#### Variant 1 — Local server, no authentication
+#### Variant 1 — LLMRunner, no configuration required
 
-```json
-"aiConfiguration": {
-  "baseUrl": "http://localhost:8080/",
-  "model": "gpt-4o",
-  "temperature": 0.2,
-  "timeoutMinutes": 5,
-  "systemPrompt": "",
-  "apiKey": "",
-  "apiKeyEnvVar": ""
-}
-```
+If you use the companion **LLMRunner** app, it serves your chosen local model on `http://localhost:8080/` — the default. The minimal `aisettings.json` above works out of the box.
 
-#### Variant 2 — Local server on a different port (e.g. Ollama)
+#### Variant 2 — Ollama (Qwen 2.5 14B)
+
+See [Getting Started with Ollama + Qwen 2.5 14B](#getting-started-with-ollama--qwen-25-14b).
+
+#### Variant 3 — Ollama with a different model
 
 ```json
 "aiConfiguration": {
   "baseUrl": "http://localhost:11434/",
-  "model": "llama3.1",
+  "model": "llama3.1:8b",
   "temperature": 0.2,
   "timeoutMinutes": 10,
   "systemPrompt": "",
@@ -281,12 +340,28 @@ The same `aiConfiguration` block works for every endpoint — only the values ch
 }
 ```
 
-#### Variant 3 — Local server with token
+#### Variant 4 — LM Studio
+
+```json
+"aiConfiguration": {
+  "baseUrl": "http://localhost:1234/",
+  "model": "qwen2.5-14b-instruct",
+  "temperature": 0.2,
+  "timeoutMinutes": 10,
+  "systemPrompt": "",
+  "apiKey": "",
+  "apiKeyEnvVar": ""
+}
+```
+
+> Local servers often ignore `model`; setting it anyway is harmless.
+
+#### Variant 5 — Local server with token
 
 ```json
 "aiConfiguration": {
   "baseUrl": "http://localhost:11434/",
-  "model": "llama3.1",
+  "model": "qwen2.5:14b",
   "temperature": 0.2,
   "timeoutMinutes": 5,
   "systemPrompt": "",
@@ -295,9 +370,9 @@ The same `aiConfiguration` block works for every endpoint — only the values ch
 }
 ```
 
-> ⚠️ **Do not commit real values** into version control. Prefer Variant 4.
+> ⚠️ **Do not commit real values** into version control. Prefer Variant 6.
 
-#### Variant 4 — Hosted API via environment variable *(recommended)*
+#### Variant 6 — Hosted API via environment variable *(recommended for cloud)*
 
 ```json
 "aiConfiguration": {
@@ -334,7 +409,7 @@ env:
 docker run -e OPENAI_API_KEY="sk-…" your-image
 ```
 
-#### Variant 5 — Azure OpenAI
+#### Variant 7 — Azure OpenAI
 
 ```json
 "aiConfiguration": {
@@ -348,7 +423,7 @@ docker run -e OPENAI_API_KEY="sk-…" your-image
 }
 ```
 
-#### Variant 6 — Custom proxy / corporate endpoint
+#### Variant 8 — Custom proxy / corporate endpoint
 
 ```json
 "aiConfiguration": {
@@ -369,7 +444,7 @@ docker run -e OPENAI_API_KEY="sk-…" your-image
 - **`baseUrl`, if given, must end with `/`.** `http://localhost:11434` is invalid; `http://localhost:11434/` is correct.
 - **Env-var names are case-sensitive** on Linux and macOS. `OPENAI_API_KEY` ≠ `openai_api_key`.
 - **If the env var is not set**, no `Authorization` header is sent. Cloud providers will return `401`; local servers without auth behave as expected.
-- **Never commit secrets.** Prefer Variant 4 for cloud endpoints.
+- **Never commit secrets.** Prefer Variant 6 for cloud endpoints.
 
 ### Configuration Reference
 
@@ -426,24 +501,20 @@ NetAI.ResxTranslator.Cli/
 - ✅ Publish stable NuGet package
 - ✅ MSBuild task documentation
 - ✅ Command-line tool (`netai-resx`)
+- ✅ Companion app **LLMRunner** for local-model setup
 - **Translation memory** — avoid retranslating identical strings across builds
 - **Glossary validation** — warn when a glossary term is not respected
 - **Context injection** — feed `translator.context` into the domain-analysis prompt
 - **Pluggable providers** — explicit provider abstractions beyond OpenAI-compatible HTTP
-- **Enterprise version** with:
-  - Team dashboards
-  - CI/CD pipeline analytics
-  - Translation quality scoring
-
-> **Done:** External LLM providers (OpenAI, Azure OpenAI, and any OpenAI-compatible endpoint) are available today via the `aiConfiguration` block.
+- **Enterprise edition** — see below
 
 ---
 
-## Enterprise
+## Enterprise Edition — Help Us Prioritize It
 
-This repository is the **community edition** and will remain MIT-licensed and freely usable.
+> **Heads up for developers:** if you like what you see here and think your organization would benefit from a more capable, supported edition, please say so. The Enterprise roadmap is driven by real demand.
 
-An **Enterprise edition** is planned on top of this codebase. It will target teams that need additional controls around localization at scale:
+This repository is the **community edition** and will remain MIT-licensed and freely usable. An **Enterprise edition** is planned on top of this codebase, targeting teams that need additional controls around localization at scale:
 
 - Centralized glossaries and terminology governance
 - Audit trails and approval workflows
@@ -451,6 +522,14 @@ An **Enterprise edition** is planned on top of this codebase. It will target tea
 - Provider governance and policy enforcement
 - CI/CD-native reporting and quality scoring
 - Team dashboards for translation coverage and drift
+
+### How you can help
+
+You don't need to be a decision-maker to move this forward:
+
+1. **Tell your employer.** If your team ships multi-language software, mention the project in your next 1:1, architecture meeting, or internal Slack. Real organizational interest is what gets this built next.
+2. **Open an issue with the label `enterprise-interest`** and describe what *your* team would need most — centralized glossaries? audit trails? translation memory? Even a one-liner helps us prioritize.
+3. **Star the repository** if you want to be kept in the loop — we'll announce Enterprise milestones there first.
 
 The community core will continue to evolve independently. If you're evaluating this project for a larger organization and want to talk about the enterprise roadmap, please open an issue or reach out via the contact details in the repository profile.
 
