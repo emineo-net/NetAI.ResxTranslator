@@ -18,6 +18,5 @@ app.Configure(cfg =>
         .WithDescription("Create a default aisettings.json in the given directory.");
 });
 
-// sum::
 
 return await app.RunAsync(args);
