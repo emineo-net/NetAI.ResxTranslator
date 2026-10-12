@@ -22,7 +22,6 @@ This README covers the **MSBuild task / NuGet package**. For the full project ov
 - [Multi-Targeting & WPF](#multi-targeting--wpf)
 - [Troubleshooting](#troubleshooting)
 - [Configuration](#configuration)
-- [Enterprise Edition — Help Us Prioritize It](#enterprise-edition--help-us-prioritize-it)
 - [License](#license)
 
 ---
@@ -251,29 +250,6 @@ Task-specific setting:
 | Option                | Type     | Default | Description                                                       |
 |-----------------------|----------|---------|-------------------------------------------------------------------|
 | `translator.mode`     | string   | `all`   | `all` or comma-separated: `debug`, `release`, `publish`           |
-
----
-
-## Enterprise Edition — Help Us Prioritize It
-
-> **If you like this package and think your team would benefit from a supported, more capable edition — please tell your employer.** The Enterprise roadmap is driven by real demand.
-
-The community edition is and will remain MIT-licensed. An **Enterprise edition** is planned on top of this codebase with features like:
-
-- Centralized glossaries and terminology governance
-- Audit trails and approval workflows
-- Translation memory shared across projects
-- Provider governance and policy enforcement
-- CI/CD-native reporting and quality scoring
-- Team dashboards for translation coverage and drift
-
-**How you can help:**
-
-1. Mention the project to your team lead, architect, or in your next 1:1.
-2. Open an issue with the label **`enterprise-interest`** describing what your team would need.
-3. Star the repository — Enterprise milestones are announced there first.
-
-See the [full Enterprise section in the solution README](../../../README.md#enterprise-edition--help-us-prioritize-it).
 
 ---
 

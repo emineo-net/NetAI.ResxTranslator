@@ -20,7 +20,6 @@ This README covers the **CLI tool**. For the full project overview, see the [sol
 - [JSON Output (for CI)](#json-output-for-ci)
 - [Examples](#examples)
 - [Configuration](#configuration)
-- [Enterprise Edition — Help Us Prioritize It](#enterprise-edition--help-us-prioritize-it)
 - [License](#license)
 
 ---
@@ -294,29 +293,6 @@ The CLI reads the same `aisettings.json` as the build task — there is only one
 - Rules & pitfalls (trailing slash on `baseUrl`, mutually-exclusive key fields, …).
 
 **Note:** `translator.mode` is **ignored by the CLI** — a CLI invocation is always explicit. Mode-based gating only applies to the MSBuild task.
-
----
-
-## Enterprise Edition — Help Us Prioritize It
-
-> **If you find `netai-resx` useful and think your organization would too — please tell them.** The Enterprise roadmap is driven by real demand.
-
-The community edition is and will remain MIT-licensed. An **Enterprise edition** is planned on top of the same engine, with features like:
-
-- Centralized glossaries and terminology governance
-- Audit trails and approval workflows
-- Translation memory shared across projects
-- Provider governance and policy enforcement
-- CI/CD-native reporting and quality scoring
-- Team dashboards for translation coverage and drift
-
-**How you can help:**
-
-1. Mention the project to your team lead, architect, or in your next 1:1.
-2. Open an issue with the label **`enterprise-interest`** describing what your team would need.
-3. Star the repository — Enterprise milestones are announced there first.
-
-See the [full Enterprise section in the solution README](../../../README.md#enterprise-edition--help-us-prioritize-it).
 
 ---
 
