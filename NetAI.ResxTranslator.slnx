@@ -8,6 +8,7 @@
     <File Path="buisinessPlanTranslatorNuget.md" />
     <File Path="creatLocalNuget.bat" />
     <File Path="INFRASTRUKTUR.md" />
+    <File Path="publishNuget.txt" />
     <File Path="RebuildNetAIResxTranslator.bat" />
     <File Path="TODO.md" />
   </Folder>
