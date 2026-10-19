@@ -11,11 +11,11 @@ app.Configure(cfg =>
     cfg.AddCommand<TranslateCommand>("translate")
         .WithDescription("Translate .resx files in a project directory using the configured LLM.")
         .WithExample("translate", "./src/MyApp")
-        .WithExample("translate", "./src/MyApp", "--config", "./aisettings.json")
+        .WithExample("translate", "./src/MyApp", "--config", "./aitranssettings.json")
         .WithExample("translate", "./src/MyApp", "--json");
 
     cfg.AddCommand<InitCommand>("init")
-        .WithDescription("Create a default aisettings.json in the given directory.");
+        .WithDescription("Create a default aitranssettings.json in the given directory.");
 });
 
 

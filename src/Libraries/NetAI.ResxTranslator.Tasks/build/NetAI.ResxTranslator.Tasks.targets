@@ -43,16 +43,16 @@
 		      DestinationFiles="$(MSBuildProjectDirectory)\aisettings-schema.json"
 		      Condition="!Exists('$(MSBuildProjectDirectory)\aisettings-schema.json')" />
 
-		<Copy SourceFiles="$(MSBuildThisFileDirectory)..\aisettings.json"
-		      DestinationFiles="$(MSBuildProjectDirectory)\aisettings.json"
-		      Condition="!Exists('$(MSBuildProjectDirectory)\aisettings.json')" />
+		<Copy SourceFiles="$(MSBuildThisFileDirectory)..\aitranssettings.json"
+		      DestinationFiles="$(MSBuildProjectDirectory)\aitranssettings.json"
+		      Condition="!Exists('$(MSBuildProjectDirectory)\aitranssettings.json')" />
 
 		<!-- Remove + Include statt Update: funktioniert auch, wenn die Dateien erst jetzt erzeugt wurden -->
 		<ItemGroup>
 			<None Remove="aisettings-schema.json" />
-			<None Remove="aisettings.json" />
+			<None Remove="aitranssettings.json" />
 			<None Include="aisettings-schema.json" CopyToOutputDirectory="PreserveNewest" />
-			<None Include="aisettings.json" CopyToOutputDirectory="PreserveNewest" />
+			<None Include="aitranssettings.json" CopyToOutputDirectory="PreserveNewest" />
 		</ItemGroup>
 	</Target>
 

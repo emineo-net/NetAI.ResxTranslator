@@ -27,7 +27,7 @@
 
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 
-		<VersionPrefix>1.0.3</VersionPrefix>
+		<VersionPrefix>1.0.4</VersionPrefix>
 		<BuildTimestamp>$([System.DateTime]::Now.ToString("yyyyMMddHHmm"))</BuildTimestamp>
 		<VersionSuffix>dev.$(BuildTimestamp)</VersionSuffix>
 
@@ -44,7 +44,7 @@
 
 	<ItemGroup>
 		<None Include="build\NetAI.ResxTranslator.Tasks.targets" Pack="true" PackagePath="build\" />
-		<None Include="aisettings.json" Pack="true" PackagePath="" Condition="Exists('aisettings.json')" />
+		<None Include="aitranssettings.json" Pack="true" PackagePath="" Condition="Exists('aitranssettings.json')" />
 		<None Include="aisettings-schema.json" Pack="true" PackagePath="" Condition="Exists('aisettings-schema.json')" />
 	</ItemGroup>
 

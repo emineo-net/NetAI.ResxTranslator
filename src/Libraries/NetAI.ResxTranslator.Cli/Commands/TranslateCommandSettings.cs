@@ -10,7 +10,7 @@ public sealed class TranslateCommandSettings : CommandSettings
     public string ProjectDir { get; init; } = "";
 
     [CommandOption("--config <FILE>")]
-    [Description("Path to aisettings.json. Default: nearest file found upward from <projectDir>.")]
+    [Description("Path to aitranssettings.json. Default: nearest file found upward from <projectDir>.")]
     public string? ConfigPath { get; init; }
 
     [CommandOption("-v|--verbose")]

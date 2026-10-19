@@ -24,7 +24,7 @@
   - [1. MSBuild Task (NuGet)](#1-msbuild-task-nuget)
   - [2. Command-Line Tool (`netai-resx`)](#2-command-line-tool-netai-resx)
   - [3. Programmatic API](#3-programmatic-api)
-- [Configuration — `aisettings.json`](#configuration--aisettingsjson)
+- [Configuration — `aitranssettings.json`](#configuration--aisettingsjson)
   - [Getting Started with Ollama + Qwen 2.5 14B](#getting-started-with-ollama--qwen-25-14b)
   - [AI Connection Variants](#ai-connection-variants)
   - [Rules & Pitfalls](#rules--pitfalls)
@@ -68,7 +68,7 @@ NetAI.ResxTranslator is split into three projects, each with a clear job:
 | **`NetAI.ResxTranslator.Tasks`** | An MSBuild task shipped as a NuGet package. Runs the engine before compilation. | Every .NET project that wants localization on autopilot. |
 | **`NetAI.ResxTranslator.Cli`** | A `dotnet tool` named **`netai-resx`**. Runs the same engine on the command line. | CI pipelines, one-off jobs, debugging. |
 
-Both `Tasks` and `Cli` sit on top of `Core`. Same engine, same `aisettings.json`, same results. Pick whichever fits your workflow — or use both.
+Both `Tasks` and `Cli` sit on top of `Core`. Same engine, same `aitranssettings.json`, same results. Pick whichever fits your workflow — or use both.
 
 Detailed documentation lives next to each project:
 
@@ -85,7 +85,7 @@ Detailed documentation lives next to each project:
 
 - **Pick from popular models** — a curated list with direct **HuggingFace** download links, so you don't have to hunt for GGUF files and quantizations that actually work.
 - **Chat with the model before wiring it up** — sanity-check translation quality on your own strings, not on someone else's benchmark.
-- **Serve it on `http://localhost:8081/` with one click** — exactly the address `aisettings.json` expects by default. No environment variables, no command-line flags, no guesswork.
+- **Serve it on `http://localhost:8081/` with one click** — exactly the address `aitranssettings.json` expects by default. No environment variables, no command-line flags, no guesswork.
 
 That means the whole "get a local LLM running" step collapses into: open LLMRunner → pick a model → click *Serve*. From there, `dotnet build` will already find your model.
 
@@ -105,7 +105,7 @@ If you prefer to run a model server yourself (Ollama, LM Studio, llama.cpp), tha
 - **Placeholder-safe** — `{0}`, `{name}`, `%s`, `\n`, `\t` are preserved verbatim. The model is instructed to treat them as immutable, and the response parser validates the output.
 - **Automatic file creation** — Declare `supportedLanguages` and missing satellite `.resx` files are generated from the neutral resource on the fly.
 - **Idempotent & incremental** — Only entries with empty values are translated. Re-running is cheap.
-- **One config file** — All behavior is driven by `aisettings.json` with full JSON Schema validation in VS, Rider, and VS Code.
+- **One config file** — All behavior is driven by `aitranssettings.json` with full JSON Schema validation in VS, Rider, and VS Code.
 - **Two entry points, one engine** — NuGet build task and `netai-resx` CLI share the same `Core`.
 - **Safe by default** — Skips design-time builds, respects multi-targeting, can be disabled per build.
 - **Companion local-LLM runner** — LLMRunner gets you from zero to `localhost:8081` without a terminal.
@@ -175,7 +175,7 @@ The zero-touch option: translation happens automatically before every build.
 dotnet add package NetAI.ResxTranslator.Tasks
 ```
 
-Then build once, edit `aisettings.json`, and build again. Your `de.resx`, `fr.resx`, `it.resx` files — even the ones that don't exist yet — will be created and filled in.
+Then build once, edit `aitranssettings.json`, and build again. Your `de.resx`, `fr.resx`, `it.resx` files — even the ones that don't exist yet — will be created and filled in.
 
 Full documentation, build integration details, and troubleshooting:
 👉 **[`src/Libraries/NetAI.ResxTranslator.Tasks/README.md`](src/Libraries/NetAI.ResxTranslator.Tasks/README.md)**
@@ -187,7 +187,7 @@ For CI pipelines, ad-hoc runs, and debugging:
 ```bash
 dotnet tool install --global NetAI.ResxTranslator.Cli
 
-netai-resx init   ./src/MyApp       # scaffold aisettings.json
+netai-resx init   ./src/MyApp       # scaffold aitranssettings.json
 netai-resx translate ./src/MyApp    # translate now, once
 ```
 
@@ -221,9 +221,9 @@ if (!result.Success)
 
 ---
 
-## Configuration — `aisettings.json`
+## Configuration — `aitranssettings.json`
 
-Whether you use the task or the CLI, everything is driven by a single `aisettings.json` at the project root. It's validated by `aisettings-schema.json` (JSON Schema, Draft 07), so VS Code, Rider, and Visual Studio give you autocomplete and inline validation.
+Whether you use the task or the CLI, everything is driven by a single `aitranssettings.json` at the project root. It's validated by `aisettings-schema.json` (JSON Schema, Draft 07), so VS Code, Rider, and Visual Studio give you autocomplete and inline validation.
 
 ### Minimal example
 
@@ -263,7 +263,7 @@ ollama serve
 
 Ollama listens on `http://localhost:11434/` and exposes an OpenAI-compatible endpoint at `/v1/chat/completions` — exactly the shape NetAI.ResxTranslator expects.
 
-**Step 3 — Point `aisettings.json` at it:**
+**Step 3 — Point `aitranssettings.json` at it:**
 
 ```json
 {
@@ -319,7 +319,7 @@ The same `aiConfiguration` block works for every endpoint — only the values ch
 
 #### Variant 1 — LLMRunner, no configuration required
 
-If you use the companion **LLMRunner** app, it serves your chosen local model on `http://localhost:8081/` — the default. The minimal `aisettings.json` above works out of the box.
+If you use the companion **LLMRunner** app, it serves your chosen local model on `http://localhost:8081/` — the default. The minimal `aitranssettings.json` above works out of the box.
 
 #### Variant 2 — Ollama (Qwen 2.5 14B)
 
@@ -483,7 +483,7 @@ NetAI.ResxTranslator.Core/
 NetAI.ResxTranslator.Tasks/
   ResxTranslatorTask.cs    MSBuild task entry point
   build/NetAI.ResxTranslator.Tasks.targets
-  aisettings.json          Default config shipped with the package
+  aitranssettings.json          Default config shipped with the package
   aisettings-schema.json   JSON Schema shipped with the package
 
 NetAI.ResxTranslator.Cli/
@@ -528,7 +528,7 @@ Contributions are welcome! Please open an issue or submit a pull request.
 4. Push to the branch
 5. Open a pull request
 
-Please ensure your code follows the existing style and includes appropriate tests. For bug reports, please include a minimal reproduction — a tiny host project plus the relevant `aisettings.json`.
+Please ensure your code follows the existing style and includes appropriate tests. For bug reports, please include a minimal reproduction — a tiny host project plus the relevant `aitranssettings.json`.
 
 ---
 

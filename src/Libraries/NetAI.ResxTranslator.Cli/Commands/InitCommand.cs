@@ -14,11 +14,11 @@ public sealed class InitCommand : Command<InitCommandSettings>
     public override int Execute(CommandContext context, InitCommandSettings settings)
     {
         var dir = Path.GetFullPath(settings.Directory ?? Directory.GetCurrentDirectory());
-        var target = Path.Combine(dir, "aisettings.json");
+        var target = Path.Combine(dir, "aitranssettings.json");
 
         if (File.Exists(target))
         {
-            AnsiConsole.MarkupLine($"[yellow]aisettings.json already exists:[/] {target}");
+            AnsiConsole.MarkupLine($"[yellow]aitranssettings.json already exists:[/] {target}");
             return 0;
         }
 

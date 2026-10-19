@@ -22,7 +22,7 @@ public partial class MainWindow : Window
             ProjectDir = @"C:\Users\steph\source\repos\NetAI.ResxTranslator\src\UI\WpftranlationTestApp",
             ApiKey = "sk-...",
             AppContext = "Rechnungs-Verwaltung für KMUs",
-            //GlossaryPath = @"C:\Users\steph\source\repos\NetAI.ResxTranslator\src\UI\WpftranlationTestApp\aisettings.json",
+            //GlossaryPath = @"C:\Users\steph\source\repos\NetAI.ResxTranslator\src\UI\WpftranlationTestApp\aitranssettings.json",
             SupportedLanguages = "en, de, it" // optional: überschreibt <SupportedLanguage> aus der .csproj
         };
         var ok = await runner.Run(msg => Console.WriteLine($"[Info]  {msg}"), msg => Console.WriteLine($"[Fehler] {msg}"));

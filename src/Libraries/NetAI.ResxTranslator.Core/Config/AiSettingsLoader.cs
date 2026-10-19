@@ -11,11 +11,11 @@ public static class AiSettingsLoader
             throw new ArgumentException("ProjectDir darf nicht leer sein.", nameof(projectDir));
         }
 
-        var path = Path.Combine(projectDir, "aisettings.json");
+        var path = Path.Combine(projectDir, "aitranssettings.json");
 
         if (!File.Exists(path))
         {
-            throw new FileNotFoundException($"aisettings.json wurde in '{projectDir}' nicht gefunden.", path);
+            throw new FileNotFoundException($"aitranssettings.json wurde in '{projectDir}' nicht gefunden.", path);
         }
 
         var json = File.ReadAllText(path);
@@ -24,7 +24,7 @@ public static class AiSettingsLoader
 
         if (config is null)
         {
-            throw new InvalidOperationException($"aisettings.json unter '{path}' konnte nicht geparst werden.");
+            throw new InvalidOperationException($"aitranssettings.json unter '{path}' konnte nicht geparst werden.");
         }
 
         config.AiConfiguration?.Normalize();

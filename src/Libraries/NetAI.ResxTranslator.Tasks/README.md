@@ -55,7 +55,7 @@ Or add the reference directly to your `.csproj`:
 
 The package injects its `.targets` file automatically. On the **first build**, two files are copied into your project root if they don't already exist:
 
-- **`aisettings.json`** — the configuration file *(commit this)*.
+- **`aitranssettings.json`** — the configuration file *(commit this)*.
 - **`aisettings-schema.json`** — a JSON Schema for editor IntelliSense *(commit this)*.
 
 Both are added to the project as `None` items with `CopyToOutputDirectory=PreserveNewest`.
@@ -65,13 +65,13 @@ Both are added to the project as `None` items with `CopyToOutputDirectory=Preser
 ## Quick Start
 
 1. **Add the package** to your project.
-2. **Build once** — `aisettings.json` is scaffolded into your project root.
-3. **Edit `aisettings.json`** to point at your LLM (see [Configuration](#configuration) or the [solution README](../../../README.md#configuration--aisettingsjson)).
+2. **Build once** — `aitranssettings.json` is scaffolded into your project root.
+3. **Edit `aitranssettings.json`** to point at your LLM (see [Configuration](#configuration) or the [solution README](../../../README.md#configuration--aisettingsjson)).
 4. **Build again.** Done.
 
 Your `de.resx`, `fr.resx`, `it.resx` files — even the ones that don't exist yet — will be created and filled in.
 
-Minimal `aisettings.json` — assuming a local model on `http://localhost:8081/` (which is what our companion app **LLMRunner** serves out of the box):
+Minimal `aitranssettings.json` — assuming a local model on `http://localhost:8081/` (which is what our companion app **LLMRunner** serves out of the box):
 
 ```json
 {
@@ -103,7 +103,7 @@ You have three ways to get an OpenAI-compatible model on your machine:
 
 - Browse a curated list of popular LLMs with **direct HuggingFace download links**.
 - **Chat with the model** before you trust it with your resource files.
-- **Serve it on `http://localhost:8081/`** with one click — the exact address `aisettings.json` expects by default.
+- **Serve it on `http://localhost:8081/`** with one click — the exact address `aitranssettings.json` expects by default.
 
 Zero terminals. Zero flags. Find it in the same repository profile or the releases page.
 
@@ -120,7 +120,7 @@ ollama pull qwen2.5:14b
 ollama serve
 ```
 
-Point `aisettings.json` at it:
+Point `aitranssettings.json` at it:
 
 ```json
 "aiConfiguration": {
@@ -226,7 +226,7 @@ If you're using the package from a local feed, make sure the `.nupkg` was fully 
 Check the following in order:
 
 1. Is the translator enabled? Look for `🤖 [ResxTranslator] Mode condition met` in the build log. If it says `Skipped`, check [Mode-Based Execution](#mode-based-execution).
-2. Is `aisettings.json` at the project root? The task searches upward from `ProjectDir` and stops at the first match.
+2. Is `aitranssettings.json` at the project root? The task searches upward from `ProjectDir` and stops at the first match.
 3. Are there actually missing translations? Only entries with an empty `<value>` are translated.
 4. Is the LLM reachable? A wrong `baseUrl` (or missing trailing `/`) will produce an error in the build log.
 
@@ -243,7 +243,7 @@ That's the LLM, not the task. Options:
 
 ## Configuration
 
-All behavior is driven by `aisettings.json` at the project root. The **full reference** — including all `aiConfiguration` variants (local, OpenAI, Azure, custom proxy) and rules — lives in the [solution README](../../../README.md#configuration--aisettingsjson).
+All behavior is driven by `aitranssettings.json` at the project root. The **full reference** — including all `aiConfiguration` variants (local, OpenAI, Azure, custom proxy) and rules — lives in the [solution README](../../../README.md#configuration--aisettingsjson).
 
 Task-specific setting:
 

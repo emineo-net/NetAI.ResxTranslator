@@ -1,7 +1,7 @@
 ﻿# NetAI.ResxTranslator.Cli
 
 > **`netai-resx`** — translate your `.resx` files from the command line.
-> Same engine as the MSBuild task. Same `aisettings.json`. No IDE required.
+> Same engine as the MSBuild task. Same `aitranssettings.json`. No IDE required.
 
 This README covers the **CLI tool**. For the full project overview, see the [solution README](../../../README.md). If you'd rather have translations happen automatically during `dotnet build`, use the sibling [`NetAI.ResxTranslator.Tasks`](../NetAI.ResxTranslator.Tasks/README.md) package.
 
@@ -69,13 +69,13 @@ dotnet tool install NetAI.ResxTranslator.Cli
 ## Quick Start
 
 ```bash
-# 1. Scaffold a default aisettings.json in your project
+# 1. Scaffold a default aitranssettings.json in your project
 netai-resx init ./src/MyApp
 
 # 2. Point it at a local model. The easiest way:
 #    - open LLMRunner (companion app, same authors)
 #    - pick a model, click "Serve on localhost:8081"
-#    - the default aisettings.json already expects exactly that address.
+#    - the default aitranssettings.json already expects exactly that address.
 #
 #    Prefer a terminal? Use Ollama with Qwen 2.5 14B:
 #      ollama pull qwen2.5:14b
@@ -96,7 +96,7 @@ That's it. Your `de.resx`, `fr.resx`, `it.resx` files will be created and filled
 
 ### `init`
 
-Create a default `aisettings.json` in the given directory.
+Create a default `aitranssettings.json` in the given directory.
 
 ```
 netai-resx init [directory]
@@ -104,11 +104,11 @@ netai-resx init [directory]
 
 | Argument      | Required | Default                    | Description                                |
 |---------------|----------|----------------------------|--------------------------------------------|
-| `[directory]` | no       | current working directory  | Where to create `aisettings.json`.         |
+| `[directory]` | no       | current working directory  | Where to create `aitranssettings.json`.         |
 
 Behavior:
 
-- If `aisettings.json` already exists, it prints a yellow notice and exits `0` — **it never overwrites an existing config**.
+- If `aitranssettings.json` already exists, it prints a yellow notice and exits `0` — **it never overwrites an existing config**.
 - Otherwise it writes a fully-populated default file (all fields present, safe to commit) and prints the path.
 
 **Example:**
@@ -134,7 +134,7 @@ netai-resx translate <projectDir> [options]
 
 The command:
 
-1. Loads `aisettings.json` from `<projectDir>` (or upward — see [`--config`](#options)).
+1. Loads `aitranssettings.json` from `<projectDir>` (or upward — see [`--config`](#options)).
 2. Validates `aiConfiguration` and language codes.
 3. Discovers `.resx` files, creates missing satellite files, and translates empty entries.
 4. Writes everything back in place.
@@ -153,7 +153,7 @@ netai-resx translate ./src/MyApp
 
 | Option | Description |
 |---|---|
-| `--config <FILE>` | Path to `aisettings.json`. Default: nearest file found **upward** from `<projectDir>`. |
+| `--config <FILE>` | Path to `aitranssettings.json`. Default: nearest file found **upward** from `<projectDir>`. |
 | `-v`, `--verbose` | Show every log line from the orchestrator. |
 | `--no-color` | Disable ANSI colors (useful when piping to a file). |
 | `--json` | Machine-readable JSON on **stdout**, logs on **stderr**. Ideal for CI. |
@@ -285,7 +285,7 @@ done
 
 ## Configuration
 
-The CLI reads the same `aisettings.json` as the build task — there is only one config format. See the [solution README](../../../README.md#configuration--aisettingsjson) for:
+The CLI reads the same `aitranssettings.json` as the build task — there is only one config format. See the [solution README](../../../README.md#configuration--aisettingsjson) for:
 
 - The full configuration reference.
 - All AI connection variants (local, OpenAI, Azure, custom proxy).

@@ -10,7 +10,7 @@ public class ResxTranslatorTask : Task
     [Required] public string ProjectDir { get; set; } = string.Empty;
 
     // Nur noch das, was sich aus dem Build-Kontext ergibt,
-    // bleibt als MSBuild-Property. Alles andere kommt aus aisettings.json.
+    // bleibt als MSBuild-Property. Alles andere kommt aus aitranssettings.json.
     public string? CurrentConfiguration { get; set; }
     public bool IsPublishing { get; set; }
 
@@ -29,7 +29,7 @@ public class ResxTranslatorTask : Task
         }
         catch (Exception ex)
         {
-            Log.LogError($"[ResxTranslator] aisettings.json konnte nicht geladen werden: {ex.Message}");
+            Log.LogError($"[ResxTranslator] aitranssettings.json konnte nicht geladen werden: {ex.Message}");
             return false;
         }
 

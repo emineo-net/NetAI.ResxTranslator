@@ -110,7 +110,7 @@ public sealed class TranslateCommand : AsyncCommand<TranslateCommandSettings>
         var dir = new DirectoryInfo(projectDir);
         while (dir is not null)
         {
-            if (File.Exists(Path.Combine(dir.FullName, "aisettings.json")))
+            if (File.Exists(Path.Combine(dir.FullName, "aitranssettings.json")))
             {
                 return AiSettingsLoader.Load(dir.FullName);
             }
@@ -118,7 +118,7 @@ public sealed class TranslateCommand : AsyncCommand<TranslateCommandSettings>
         }
 
         throw new FileNotFoundException(
-            $"No aisettings.json found in '{projectDir}' or any parent directory.");
+            $"No aitranssettings.json found in '{projectDir}' or any parent directory.");
     }
 
     // ---------------------------------------------------------------------
