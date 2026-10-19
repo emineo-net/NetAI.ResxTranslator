@@ -85,7 +85,7 @@ Detailed documentation lives next to each project:
 
 - **Pick from popular models** — a curated list with direct **HuggingFace** download links, so you don't have to hunt for GGUF files and quantizations that actually work.
 - **Chat with the model before wiring it up** — sanity-check translation quality on your own strings, not on someone else's benchmark.
-- **Serve it on `http://localhost:8080/` with one click** — exactly the address `aisettings.json` expects by default. No environment variables, no command-line flags, no guesswork.
+- **Serve it on `http://localhost:8081/` with one click** — exactly the address `aisettings.json` expects by default. No environment variables, no command-line flags, no guesswork.
 
 That means the whole "get a local LLM running" step collapses into: open LLMRunner → pick a model → click *Serve*. From there, `dotnet build` will already find your model.
 
@@ -108,7 +108,7 @@ If you prefer to run a model server yourself (Ollama, LM Studio, llama.cpp), tha
 - **One config file** — All behavior is driven by `aisettings.json` with full JSON Schema validation in VS, Rider, and VS Code.
 - **Two entry points, one engine** — NuGet build task and `netai-resx` CLI share the same `Core`.
 - **Safe by default** — Skips design-time builds, respects multi-targeting, can be disabled per build.
-- **Companion local-LLM runner** — LLMRunner gets you from zero to `localhost:8080` without a terminal.
+- **Companion local-LLM runner** — LLMRunner gets you from zero to `localhost:8081` without a terminal.
 
 ---
 
@@ -237,7 +237,7 @@ Whether you use the task or the CLI, everything is driven by a single `aisetting
     "supportedLanguages": ["de", "fr", "it"]
   },
   "aiConfiguration": {
-    "baseUrl": "http://localhost:8080/",
+    "baseUrl": "http://localhost:8081/",
     "model": "local-model",
     "temperature": 0.2,
     "timeoutMinutes": 5,
@@ -292,7 +292,7 @@ That's it. Build (or run `netai-resx translate`) and the model is picked up.
 > - The trailing slash on `baseUrl` is required.
 > - `timeoutMinutes` of `10` is a good starting point for a 14B model on CPU; on a modern GPU, `5` is usually enough.
 > - Qwen 2.5 14B handles the domain-analysis step (the first, one-shot prompt) well, but if you see generic domain labels like *General Software UI*, that's fine — the per-batch prompts are what matters most.
-> - If you'd rather not touch a terminal at all, **LLMRunner** does all of this — download, chat, and serve on `localhost:8080` — in a single window. See [Meet LLMRunner](#meet-llmrunner).
+> - If you'd rather not touch a terminal at all, **LLMRunner** does all of this — download, chat, and serve on `localhost:8081` — in a single window. See [Meet LLMRunner](#meet-llmrunner).
 
 ### AI Connection Variants
 
@@ -309,7 +309,7 @@ The same `aiConfiguration` block works for every endpoint — only the values ch
 
 | Field            | Type     | Default (when empty)     | Description                                                              |
 |------------------|----------|--------------------------|--------------------------------------------------------------------------|
-| `baseUrl`        | `string` | `http://localhost:8080/` | Endpoint URL — **must end with `/`**.                                    |
+| `baseUrl`        | `string` | `http://localhost:8081/` | Endpoint URL — **must end with `/`**.                                    |
 | `timeoutMinutes` | `integer`| `5`                      | HTTP timeout in minutes.                                                 |
 | `systemPrompt`   | `string` | *(none)*                 | System role and rules for the model.                                     |
 | `apiKey`         | `string` | *(none)*                 | API key directly in the file — **mutually exclusive with `apiKeyEnvVar`**. |
@@ -319,7 +319,7 @@ The same `aiConfiguration` block works for every endpoint — only the values ch
 
 #### Variant 1 — LLMRunner, no configuration required
 
-If you use the companion **LLMRunner** app, it serves your chosen local model on `http://localhost:8080/` — the default. The minimal `aisettings.json` above works out of the box.
+If you use the companion **LLMRunner** app, it serves your chosen local model on `http://localhost:8081/` — the default. The minimal `aisettings.json` above works out of the box.
 
 #### Variant 2 — Ollama (Qwen 2.5 14B)
 
@@ -439,7 +439,7 @@ docker run -e OPENAI_API_KEY="sk-…" your-image
 ### Rules & Pitfalls
 
 - **`apiKey` and `apiKeyEnvVar` are mutually exclusive.** Setting both to non-empty values produces a validation error. Both empty means *no authentication*.
-- **Empty strings mean *not set*.** `"baseUrl": ""` falls back to `http://localhost:8080/`. `"timeoutMinutes": 0` falls back to `5`.
+- **Empty strings mean *not set*.** `"baseUrl": ""` falls back to `http://localhost:8081/`. `"timeoutMinutes": 0` falls back to `5`.
 - **`baseUrl`, if given, must end with `/`.** `http://localhost:11434` is invalid; `http://localhost:11434/` is correct.
 - **Env-var names are case-sensitive** on Linux and macOS. `OPENAI_API_KEY` ≠ `openai_api_key`.
 - **If the env var is not set**, no `Authorization` header is sent. Cloud providers will return `401`; local servers without auth behave as expected.

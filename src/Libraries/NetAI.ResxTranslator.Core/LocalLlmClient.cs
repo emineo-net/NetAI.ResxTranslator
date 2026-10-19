@@ -16,7 +16,7 @@ namespace NetAI.ResxTranslator.Core
         public LocalLlmClient()
         {
             _http = new HttpClient();
-            _http.BaseAddress = new Uri("http://localhost:8080/");
+            _http.BaseAddress = new Uri("http://localhost:8081/");
             _http.Timeout = TimeSpan.FromMinutes(5);
         }
 

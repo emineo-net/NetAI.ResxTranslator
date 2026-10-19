@@ -37,7 +37,7 @@ public sealed class InitCommand : Command<InitCommandSettings>
             "supportedLanguages": []
           },
           "aiConfiguration": {
-            "baseUrl": "http://localhost:8080/",
+            "baseUrl": "http://localhost:8081/",
             "model": "gpt-4o",
             "temperature": 0.2,
             "timeoutMinutes": 5,

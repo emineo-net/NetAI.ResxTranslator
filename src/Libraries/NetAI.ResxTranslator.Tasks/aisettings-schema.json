@@ -60,8 +60,8 @@
         "baseUrl": {
           "type": "string",
           "pattern": "^$|/$",
-          "default": "http://localhost:8080/",
-          "description": "Absolute URL des Endpoints – muss mit '/' enden. Leer lassen ('') für lokalen Default 'http://localhost:8080/'. Beispiele: 'http://localhost:11434/' (Ollama), 'https://api.openai.com/'."
+          "default": "http://localhost:8081/",
+          "description": "Absolute URL des Endpoints – muss mit '/' enden. Leer lassen ('') für lokalen Default 'http://localhost:8081/'. Beispiele: 'http://localhost:11434/' (Ollama), 'https://api.openai.com/'."
         },
         "model": {
           "type": "string",

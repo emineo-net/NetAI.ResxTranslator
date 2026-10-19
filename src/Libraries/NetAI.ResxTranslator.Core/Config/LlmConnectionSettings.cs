@@ -12,7 +12,7 @@ public class LlmConnectionSettings
 {
     /// <summary>Basis-URL des Endpoints. Muss mit "/" enden.</summary>
     [JsonProperty("baseUrl")]
-    public string BaseUrl { get; set; } = "http://localhost:8080/";
+    public string BaseUrl { get; set; } = "http://localhost:8081/";
 
     /// <summary>Modell-Bezeichner (wird von manchen lokalen Servern ignoriert).</summary>
     [JsonProperty("model")]
@@ -57,7 +57,7 @@ public class LlmConnectionSettings
     /// </summary>
     public void Normalize()
     {
-        if (string.IsNullOrWhiteSpace(BaseUrl)) BaseUrl = "http://localhost:8080/";
+        if (string.IsNullOrWhiteSpace(BaseUrl)) BaseUrl = "http://localhost:8081/";
         if (string.IsNullOrWhiteSpace(Model)) Model = "gpt-4o";
         if (TimeoutMinutes <= 0) TimeoutMinutes = 5;
         if (SystemPrompt is null) SystemPrompt = string.Empty;
