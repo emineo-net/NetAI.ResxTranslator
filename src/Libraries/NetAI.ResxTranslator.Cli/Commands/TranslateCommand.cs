@@ -112,7 +112,7 @@ public sealed class TranslateCommand : AsyncCommand<TranslateCommandSettings>
         {
             if (File.Exists(Path.Combine(dir.FullName, "aitranssettings.json")))
             {
-                return AiSettingsLoader.Load(dir.FullName);
+                return aitranssettingsLoader.Load(dir.FullName);
             }
             dir = dir.Parent;
         }

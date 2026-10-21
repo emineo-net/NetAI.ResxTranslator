@@ -240,7 +240,7 @@ netai-resx translate ./src/MyApp -v
 ### Use an explicit config file
 
 ```bash
-netai-resx translate ./src/MyApp --config ./config/aisettings.ci.json
+netai-resx translate ./src/MyApp --config ./config/aitranssettings.ci.json
 ```
 
 ### Quiet machine-readable run (for scripts)
@@ -285,7 +285,7 @@ done
 
 ## Configuration
 
-The CLI reads the same `aitranssettings.json` as the build task — there is only one config format. See the [solution README](../../../README.md#configuration--aisettingsjson) for:
+The CLI reads the same `aitranssettings.json` as the build task — there is only one config format. See the [solution README](../../../README.md#configuration--aitranssettingsjson) for:
 
 - The full configuration reference.
 - All AI connection variants (local, OpenAI, Azure, custom proxy).

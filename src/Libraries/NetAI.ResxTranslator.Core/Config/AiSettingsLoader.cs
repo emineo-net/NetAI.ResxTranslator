@@ -2,7 +2,7 @@
 
 namespace NetAI.ResxTranslator.Core.Config;
 
-public static class AiSettingsLoader
+public static class aitranssettingsLoader
 {
     public static AiTestingConfig Load(string projectDir)
     {

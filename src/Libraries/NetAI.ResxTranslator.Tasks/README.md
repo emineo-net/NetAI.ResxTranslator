@@ -56,7 +56,7 @@ Or add the reference directly to your `.csproj`:
 The package injects its `.targets` file automatically. On the **first build**, two files are copied into your project root if they don't already exist:
 
 - **`aitranssettings.json`** — the configuration file *(commit this)*.
-- **`aisettings-schema.json`** — a JSON Schema for editor IntelliSense *(commit this)*.
+- **`aitranssettings-schema.json`** — a JSON Schema for editor IntelliSense *(commit this)*.
 
 Both are added to the project as `None` items with `CopyToOutputDirectory=PreserveNewest`.
 
@@ -66,7 +66,7 @@ Both are added to the project as `None` items with `CopyToOutputDirectory=Preser
 
 1. **Add the package** to your project.
 2. **Build once** — `aitranssettings.json` is scaffolded into your project root.
-3. **Edit `aitranssettings.json`** to point at your LLM (see [Configuration](#configuration) or the [solution README](../../../README.md#configuration--aisettingsjson)).
+3. **Edit `aitranssettings.json`** to point at your LLM (see [Configuration](#configuration) or the [solution README](../../../README.md#configuration--aitranssettingsjson)).
 4. **Build again.** Done.
 
 Your `de.resx`, `fr.resx`, `it.resx` files — even the ones that don't exist yet — will be created and filled in.
@@ -75,7 +75,7 @@ Minimal `aitranssettings.json` — assuming a local model on `http://localhost:8
 
 ```json
 {
-  "$schema": "aisettings-schema.json",
+  "$schema": "aitranssettings-schema.json",
   "version": "1.1",
   "translator": {
     "mode": "all",
@@ -243,7 +243,7 @@ That's the LLM, not the task. Options:
 
 ## Configuration
 
-All behavior is driven by `aitranssettings.json` at the project root. The **full reference** — including all `aiConfiguration` variants (local, OpenAI, Azure, custom proxy) and rules — lives in the [solution README](../../../README.md#configuration--aisettingsjson).
+All behavior is driven by `aitranssettings.json` at the project root. The **full reference** — including all `aiConfiguration` variants (local, OpenAI, Azure, custom proxy) and rules — lives in the [solution README](../../../README.md#configuration--aitranssettingsjson).
 
 Task-specific setting:
 

@@ -24,7 +24,7 @@
   - [1. MSBuild Task (NuGet)](#1-msbuild-task-nuget)
   - [2. Command-Line Tool (`netai-resx`)](#2-command-line-tool-netai-resx)
   - [3. Programmatic API](#3-programmatic-api)
-- [Configuration — `aitranssettings.json`](#configuration--aisettingsjson)
+- [Configuration — `aitranssettings.json`](#configuration--aitranssettingsjson)
   - [Getting Started with Ollama + Qwen 2.5 14B](#getting-started-with-ollama--qwen-25-14b)
   - [AI Connection Variants](#ai-connection-variants)
   - [Rules & Pitfalls](#rules--pitfalls)
@@ -202,7 +202,7 @@ Drive the engine from your own code — perfect for custom tooling:
 using NetAI.ResxTranslator.Core;
 using NetAI.ResxTranslator.Core.Config;
 
-var config = AiSettingsLoader.Load(@"C:\MyProject");
+var config = aitranssettingsLoader.Load(@"C:\MyProject");
 
 var orchestrator = new ResxTranslationOrchestrator();
 
@@ -223,13 +223,13 @@ if (!result.Success)
 
 ## Configuration — `aitranssettings.json`
 
-Whether you use the task or the CLI, everything is driven by a single `aitranssettings.json` at the project root. It's validated by `aisettings-schema.json` (JSON Schema, Draft 07), so VS Code, Rider, and Visual Studio give you autocomplete and inline validation.
+Whether you use the task or the CLI, everything is driven by a single `aitranssettings.json` at the project root. It's validated by `aitranssettings-schema.json` (JSON Schema, Draft 07), so VS Code, Rider, and Visual Studio give you autocomplete and inline validation.
 
 ### Minimal example
 
 ```json
 {
-  "$schema": "aisettings-schema.json",
+  "$schema": "aitranssettings-schema.json",
   "version": "1.1",
   "translator": {
     "mode": "all",
@@ -267,7 +267,7 @@ Ollama listens on `http://localhost:11434/` and exposes an OpenAI-compatible end
 
 ```json
 {
-  "$schema": "aisettings-schema.json",
+  "$schema": "aitranssettings-schema.json",
   "version": "1.1",
   "translator": {
     "mode": "all",
@@ -472,7 +472,7 @@ docker run -e OPENAI_API_KEY="sk-…" your-image
 
 ```
 NetAI.ResxTranslator.Core/
-  Config/                  AiTestingConfig, LlmConnectionSettings, TranslatorConfig, AiSettingsLoader
+  Config/                  AiTestingConfig, LlmConnectionSettings, TranslatorConfig, aitranssettingsLoader
   Models/                  ResxFileInfo, ResxEntry, ApiTranslationRequest/Response
   ProjectResxAnalyzer.cs   Discovery, parsing, writing, satellite file creation
   ResxTranslationOrchestrator.cs   End-to-end pipeline
@@ -484,7 +484,7 @@ NetAI.ResxTranslator.Tasks/
   ResxTranslatorTask.cs    MSBuild task entry point
   build/NetAI.ResxTranslator.Tasks.targets
   aitranssettings.json          Default config shipped with the package
-  aisettings-schema.json   JSON Schema shipped with the package
+  aitranssettings-schema.json   JSON Schema shipped with the package
 
 NetAI.ResxTranslator.Cli/
   Program.cs               Command registration

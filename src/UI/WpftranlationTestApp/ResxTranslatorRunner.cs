@@ -74,7 +74,7 @@ public class ResxTranslatorRunner
         AiTestingConfig config;
         try
         {
-            config = AiSettingsLoader.Load(ProjectDir);
+            config = aitranssettingsLoader.Load(ProjectDir);
         }
         catch (Exception ex)
         {

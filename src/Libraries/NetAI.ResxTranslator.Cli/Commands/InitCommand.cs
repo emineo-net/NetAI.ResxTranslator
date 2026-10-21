@@ -26,7 +26,7 @@ public sealed class InitCommand : Command<InitCommandSettings>
 
         var defaultJson = """
         {
-          "$schema": "aisettings-schema.json",
+          "$schema": "aitranssettings-schema.json",
           "version": "1.1",
           "translator": {
             "mode": "all",
